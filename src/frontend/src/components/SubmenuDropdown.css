@@ -1,0 +1,55 @@
+/*
+.dropdownSelectionDiv {
+  display: flex;
+  flex-direction: column;
+}
+  */
+
+
+.sectionTitleDiv{
+  width: 100%;
+}
+
+.sectionTitleDiv:hover{
+  background-color: rgba(220, 14, 14, 0.308);
+  cursor: pointer;
+}
+
+.sectionTitleSpan {
+  margin-top: 10px;
+  color: var(--sidebarTitleColor);
+  background-color: transparent;
+  border: none;
+  outline: none;
+}
+
+.sectionTitleSpan:focus {
+  outline: red;
+}
+
+.pageSelectionBtn {
+  margin-top: 10px !important;
+  color: var(--sidebarButtonColor) !important;
+}
+
+/*#####################*/
+
+.dropdownSelectionDiv {
+  display: grid;
+  /* Give this row zero share of available space. 
+   (this property is allowed to be animated) */
+  grid-template-rows: 0fr;
+  /* Interpolates when this attribute changes */
+  transition: grid-template-rows 0.4s ease;
+}
+
+.dropdownSelectionDiv > div {
+  /* all content that can not fit in 0fr space is hidden */
+  overflow: hidden; 
+}
+
+.dropdownSelectionDiv.open {
+  /* The fr is the fraction of normal allocated size */
+  grid-template-rows: 1fr;
+}
+

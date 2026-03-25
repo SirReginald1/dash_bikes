@@ -1,0 +1,22 @@
+{
+     "data_info": {
+          "data_download_url": "https://www.insee.fr/fr/statistiques/fichier/8680726/ensemble.zip",
+          "last_updated": "23/02/2026",
+          "is_ziped": true,
+          "keep_original_data": false,
+          "ziped_name": "pop_ziped.zip",
+          "sub_data_dir": "population",
+          "original_file_name": [
+               "donnees_departements.csv",
+               "donnees_communes.csv",
+               "donnees_regions.csv"
+          ],
+          "local_file_name": [
+               "donnees_departements.csv",
+               "donnees_communes.csv",
+               "donnees_regions.csv"
+          ],
+          "formated_file_name": "accidentsVelo.json",
+          "page_url": "https://www.insee.fr/fr/statistiques/8680726?sommaire=8681011"
+     }
+}

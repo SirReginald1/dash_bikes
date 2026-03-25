@@ -1,0 +1,79 @@
+.MuiButton-root:focus {
+  outline: none;
+  box-shadow: none; /* removes MUI's default focus ring */
+}
+
+.mainNavBar, .mainNavBarSpanLeft{
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.mainNavBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+
+  background: var(--navbarBackground);
+  /*padding: 5%;*/
+  width: 100%;
+  max-width: 100vw;    /* hard cap */
+  
+  height: var(--navBarHeight);
+
+  /*padding: 0 10px 0 10px;*/
+  justify-content: space-between;
+
+}
+
+.mainNavBarSpanLeft {
+  margin-left: 10px;
+}
+
+.navBarBtn {
+  /*margin-left: 5px;*/
+  min-width: 0;          /* allows shrinking */
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.navBarLogo, .sideBarMenuBtnImg {
+  height: var(--navBarHeight);
+}
+
+.navbarMenuBtn > svg {
+  color: var(--navbarElementColor);
+}
+
+.mainNavBar .MuiSelect-select .navbarMenuItem {
+  color: var(--navbarDropdownSelectedTextColor);
+}
+
+
+.navbarMenuBtn:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+
+/* Dropdown menu selection color */
+div[role="presentation"]>.MuiPaper-root {
+  color: var(--navbarDropdownSelectionItems);
+}
+
+/* Dropdown menu selected color */
+div[role="combobox"] {
+  color: var(--navbarSelectedDropdownItem);
+}
+
+/* Dropdown arrow color */
+path[d="M7 10l5 5 5-5z"] {
+  color: var(--navbarDropdownArrow);
+}
+
+.MuiSelect-select:hover {
+  border-color: rgb(255, 0, 157);
+}

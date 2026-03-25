@@ -1,0 +1,13 @@
+{
+     "data_info": {
+          "data_download_url": "https://raw.githubusercontent.com/gregoiredavid/france-geojson/master/regions.geojson",
+          "page_url": "https://raw.githubusercontent.com/gregoiredavid/france-geojson/master/regions.geojson",
+          "last_updated": "23/02/2026",
+          "is_ziped": false,
+          "keep_original_data": false,
+          "original_file_name": "NA",
+          "sub_data_dir": "geojson_map_data",
+          "local_file_name": "region_geo.geojson",
+          "formated_file_name": "accidentsVelo.json"
+     }
+}

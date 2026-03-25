@@ -1,0 +1,534 @@
+{
+     "data_info": {
+          "data_download_url": "https://www.data.gouv.fr/api/1/datasets/r/4c75d6c0-c927-48ca-92db-5bcce9f17ae7",
+          "page_url": "https://www.data.gouv.fr/datasets/accidents-de-velo",
+          "is_ziped": false,
+          "keep_original_data": false,
+          "last_updated": "23/02/2026",
+          "sub_data_dir": "bike_accident_data",
+          "original_file_name": "accidentsVelo.csv",
+          "local_file_name": "accidentsVelo.csv",
+          "formated_file_name": "accidentsVelo.json",
+          "excluded_variables": []
+     },
+     "var_info": {
+          "Num_Acc": {
+               "load_as": "int",
+               "convert_to": "int",
+               "description": "Identifiant de l'accident identique à celui du fichier \"rubrique CARACTERISTIQUES\" repris pour chacun des véhicules décrits impliqués dans l'accident",
+               "full_label": "Identifiant de l'accident"
+          },
+          "age": {
+               "load_as": "int",
+               "convert_to": "int",
+               "description": "Age de l'usager",
+               "full_label": "Age de l'usager"
+          },
+          "agg": {
+               "load_as": "int",
+               "convert_to": "str",
+               "description": "Si l'accident c'est produit en agglomération ou pas",
+               "full_label": "Localisation",
+               "keys": {
+                    "1": "Hors agglomération",
+                    "2": "En agglomération"
+               }
+          },
+          "an": {
+               "load_as": "int",
+               "convert_to": "int",
+               "description": "Année de l'accident",
+               "full_label": "Année de l'accident"
+          },
+          "atm": {
+               "load_as": "int",
+               "convert_to": "str",
+               "null_replace_val": "-1",
+               "description": "Conditions atmosphériques l'or de l'accident",
+               "full_label": "Conditions atmosphériques",
+               "keys": {
+                    "-1": "Non renseigné",
+                    "1": "Normale",
+                    "2": "Pluie légère",
+                    "3": "Pluie forte",
+                    "4": "Neige - grêle",
+                    "5": "Brouillard - fumée",
+                    "6": "Vent fort - tempête",
+                    "7": "Temps éblouissant",
+                    "8": "Temps couvert",
+                    "9": "Autre"
+               }
+          },
+          "catr": {
+               "load_as": "int",
+               "convert_to": "str",
+               "description": "Type de route sur lequel c'est produit l'accident",
+               "full_label": "Catégorie de route",
+               "keys": {
+                    "1": "Autoroute",
+                    "2": "Route nationale",
+                    "3": "Route Départementale",
+                    "4": "Voie Communales",
+                    "5": "Hors réseau public",
+                    "6": "Parc de stationnement ouvert à la circulation publique",
+                    "7": "Routes de métropole urbaine",
+                    "9": "autre"
+               }
+          },
+          "choc": {
+               "load_as": "int",
+               "convert_to": "str",
+               "null_replace_val": "-1",
+               "description": "Point de choc initial",
+               "full_label": "Point de choc initial",
+               "keys": {
+                    "-1": "Non renseigné",
+                    "0": "Aucun",
+                    "1": "Avant",
+                    "2": "Avant droit",
+                    "3": "Avant gauche",
+                    "4": "Arrière",
+                    "5": "Arrière droit",
+                    "6": "Arrière gauche",
+                    "7": "Côté droit",
+                    "8": "Côté gauche",
+                    "9": "Chocs multiples (tonneaux)"
+               }
+          },
+          "circ": {
+               "load_as": "int",
+               "convert_to": "str",
+               "null_replace_val": "-1",
+               "description": "Sens de circulation sur la \"route\" ou c'est produit l'accident",
+               "full_label": "Régime de circulation",
+               "keys": {
+                    "-1": "Non renseigné",
+                    "1": "A sens unique",
+                    "2": "Bidirectionnelle",
+                    "3": "A chaussées séparées",
+                    "4": "Avec voies d'affectation variable"
+               }
+          },
+          "col": {
+               "load_as": "int",
+               "convert_to": "str",
+               "null_replace_val": "-1",
+               "description": "Type de collision",
+               "full_label": "Type de collision",
+               "keys": {
+                    "-1": " Non renseigné",
+                    "1": "Deux véhicules - frontale",
+                    "2": "Deux véhicules – par l'arrière",
+                    "3": "Deux véhicules – par le coté",
+                    "4": "Trois véhicules et plus – en chaîne",
+                    "5": "Trois véhicules et plus - collisions multiples",
+                    "6": "Autre collision",
+                    "7": "Sans collision"
+               }
+          },
+          "com": {
+               "load_as": "str",
+               "convert_to": "str",
+               "description": "Le numéro de commune est un code donné par l‘INSEE. Le code est composé du code INSEE du département suivi par 3 chiffres",
+               "full_label": "Commune"
+          },
+          "date": {
+               "load_as": "str",
+               "convert_to": "str",
+               "description": "Date de l'accident",
+               "full_label": "Date de l'accident"
+          },
+          "dep": {
+               "load_as": "str",
+               "convert_to": "str",
+               "description": "Code INSEE (Institut National de la Statistique et des Etudes Economiques) du département (2A Corse-du-Sud – 2B Haute-Corse)",
+               "full_label": "Département"
+          },
+          "equipement": {
+               "load_as": "str",
+               "convert_to": "str",
+               "null_replace_val": "-1",
+               "split_char": "/",
+               "description": "Le renseignement du caractère indique la présence et l'utilisation de l'équipement de sécurité",
+               "full_label": "Equipement de sécurité",
+               "keys": {
+                    "-1": "Non renseigné",
+                    "0": "Aucun équipement",
+                    "1": "Ceinture",
+                    "2": "Casque",
+                    "3": "Dispositif enfants",
+                    "4": "Gilet réfléchissant",
+                    "5": "Airbag (2RM/3RM)",
+                    "6": "Gants (2RM/3RM)",
+                    "7": "Gants + Airbag (2RM/3RM)",
+                    "8": "Non déterminable",
+                    "9": "Autre"
+               },
+               "pdf_label": "secu1"
+          },
+          "grav": {
+               "load_as": "int",
+               "convert_to": "str",
+               "description": "Gravité de blessure de l'usager, les usagers accidentés sont classés en trois catégories de victimes plus les indemnes",
+               "full_label": "Gravité de blessure de l'usager",
+               "keys": {
+                    "1": "Indemne",
+                    "2": "Tué",
+                    "3": "Blessé hospitalisé",
+                    "4": "Blessé léger"
+               }
+          },
+          "hrmn": {
+               "load_as": "str",
+               "convert_to": "str",
+               "description": "Heure et minutes de l'accident",
+               "full_label": "Heure et minutes de l'accident"
+          },
+          "infra": {
+               "load_as": "int",
+               "convert_to": "str",
+               "null_replace_val": "-1",
+               "description": "Aménagement et Infrastructure là où s'est produit l'accident",
+               "full_label": "Aménagement - Infrastructure",
+               "keys": {
+                    "-1": "Non renseigné",
+                    "0": "Aucun",
+                    "1": "Souterrain - tunnel",
+                    "2": "Pont - autopont",
+                    "3": "Bretelle d'échangeur ou de raccordement",
+                    "4": "Voie ferrée",
+                    "5": "Carrefour aménagé",
+                    "6": "Zone piétonne",
+                    "7": "Zone de péage",
+                    "8": "Chantier",
+                    "9": "Autres"
+               }
+          },
+          "int": {
+               "load_as": "int",
+               "convert_to": "str",
+               "description": "Type d'intersection où c'est produit l'accident",
+               "full_label": "Intersection",
+               "keys": {
+                    "1": "Hors intersection",
+                    "2": "Intersection en X",
+                    "3": "Intersection en T",
+                    "4": "Intersection en Y",
+                    "5": "Intersection à plus de 4 branches",
+                    "6": "Giratoire",
+                    "7": "Place",
+                    "8": "Passage à niveau",
+                    "9": "Autre intersection"
+               }
+          },
+          "jour": {
+               "load_as": "str",
+               "convert_to": "str",
+               "description": "Jour de l'accident",
+               "full_label": "Jour de l'accident"
+          },
+          "larrout": {
+               "load_as": "str",
+               "convert_to": "float",
+               "replace_chars": {",": "."},
+               "description": "Largeur de la chaussée affectée à la circulation des véhicules ne sont pas compris les bandes d'arrêt d'urgence, les TPC et les places de stationnement (en m)",
+               "full_label": "Largeur de la chaussée affectée"
+          },
+          "lartpc": {
+               "load_as": "str",
+               "convert_to": "float",
+               "replace_chars": {",": "."},
+               "description": "Largeur du terre-plein central (TPC) s'il existe (en m)",
+               "full_label": "Largeur du terre-plein central"
+          },
+          "lat": {
+               "load_as": "str",
+               "convert_to": "float",
+               "replace_chars": {",": "."},
+               "description": "Latitude",
+               "full_label": "Latitude"
+          },
+          "long": {
+               "load_as": "str",
+               "convert_to": "float",
+               "replace_chars": {",": "."},
+               "description": "Longitude",
+               "full_label": "Longitude"
+          },
+          "lum": {
+               "load_as": "int",
+               "convert_to": "str",
+               "description": "Conditions d'éclairage dans lesquelles l'accident s'est produit",
+               "full_label": "Lumière",
+               "keys": {
+                    "1": "Plein jour",
+                    "2": "Crépuscule ou aube",
+                    "3": "Nuit sans éclairage public",
+                    "4": "Nuit avec éclairage public non allumé",
+                    "5": "Nuit avec éclairage public allumé"
+               }
+          },
+          "manoeuvehicules": {
+               "load_as": "str",
+               "convert_to": "str",
+               "null_replace_val": "-1",
+               "description": "Manoeuvre principale avant l'accident",
+               "full_label": "Manoeuvre du véhicule",
+               "keys": {
+                    "-1": "Non renseigné",
+                    "0": "Inconnue",
+                    "1": "Sans changement de direction",
+                    "10": "En faisant demi-tour sur la chaussée",
+                    "11": "A gauche",
+                    "12": "A droite",
+                    "13": "A gauche",
+                    "14": "A droite",
+                    "15": "A gauche",
+                    "16": "A droite",
+                    "17": "A gauche",
+                    "18": "A droite",
+                    "19": "Traversant la chaussée",
+                    "2": "Même sens, même file",
+                    "20": "Manœuvre de stationnement",
+                    "21": "Manœuvre d'évitement",
+                    "22": "Ouverture de porte",
+                    "23": "Arrêté (hors stationnement)",
+                    "24": "En stationnement (avec occupants",
+                    "25": "Circulant sur trottoir",
+                    "26": "Autres manœuvres",
+                    "3": "Entre 2 files",
+                    "4": "En marche arrière",
+                    "5": "A contresens",
+                    "6": "En franchissant le terre-plein central",
+                    "7": "Dans le couloir bus, dans le même sens",
+                    "8": "Dans le couloir bus, dans le sens inverse",
+                    "9": "En s'insérant"
+               },
+               "pdf_label": "manv"
+          },
+          "manv": {
+               "load_as": "int",
+               "convert_to": "str",
+               "null_replace_val": "-1",
+               "description": "Manoeuvre principale avant l'accident",
+               "full_label": "Manoeuvre principale avant l'accident",
+               "keys": {
+                    "-1": "Non renseigné",
+                    "0": "Inconnue",
+                    "1": "Sans changement de direction",
+                    "10": "En faisant demi-tour sur la chaussée",
+                    "11": "A gauche",
+                    "12": "A droite",
+                    "13": "A gauche",
+                    "14": "A droite",
+                    "15": "A gauche",
+                    "16": "A droite",
+                    "17": "A gauche",
+                    "18": "A droite",
+                    "19": "Traversant la chaussée",
+                    "2": "Même sens, même file",
+                    "20": "Manœuvre de stationnement",
+                    "21": "Manœuvre d'évitement",
+                    "22": "Ouverture de porte",
+                    "23": "Arrêté (hors stationnement)",
+                    "24": "En stationnement (avec occupants",
+                    "25": "Circulant sur trottoir",
+                    "26": "Autres manœuvres",
+                    "3": "Entre 2 files",
+                    "4": "En marche arrière",
+                    "5": "A contresens",
+                    "6": "En franchissant le terre-plein central",
+                    "7": "Dans le couloir bus, dans le même sens",
+                    "8": "Dans le couloir bus, dans le sens inverse",
+                    "9": "En s'insérant"
+               }
+          },
+          "mois": {
+               "load_as": "str",
+               "convert_to": "str",
+               "description": "Mois de l'accident",
+               "full_label": "Mois de l'accident"
+          },
+          "nbv": {
+               "load_as": "str",
+               "convert_to": "int",
+               "replace_with_null": ["#VALEURMULTI"],
+               "description": "Nombre total de voies de circulation",
+               "full_label": "Nombre total de voies de circulation"
+          },
+          "numVehicules": {
+               "load_as": "int",
+               "convert_to": "int",
+               "description": "Permet de situer la place occupée dans le véhicule par l'usager au moment de l'accident. Le détail est donné par l'illustration ci-dessous",
+               "full_label": "Place occupée dans le véhicule",
+               "pdf_label": "place"
+          },
+          "obs": {
+               "load_as": "int",
+               "convert_to": "str",
+               "null_replace_val": "-1",
+               "description": "Obstacle fixe heurté",
+               "full_label": "Obstacle fixe heurté",
+               "keys": {
+                    "-1": "Non renseigné",
+                    "0": "Sans objet",
+                    "1": "Véhicule en stationnement",
+                    "10": " Parapet",
+                    "11": " Ilot, refuge, borne haute",
+                    "12": " Bordure de trottoir",
+                    "13": " Fossé, talus, paroi rocheuse",
+                    "14": " Autre obstacle fixe sur chaussée",
+                    "15": " Autre obstacle fixe sur trottoir ou accotement",
+                    "16": " Sortie de chaussée sans obstacle",
+                    "17": " Buse – tête d'aqueduc",
+                    "2": "Arbre",
+                    "3": "Glissière métallique",
+                    "4": "Glissière béton",
+                    "5": "Autre glissière",
+                    "6": "Bâtiment, mur, pile de pont",
+                    "7": "Support de signalisation verticale ou poste d'appel d'urgence",
+                    "8": "Poteau",
+                    "9": "Mobilier urbain"
+               }
+          },
+          "obsm": {
+               "load_as": "int",
+               "convert_to": "str",
+               "null_replace_val": "-1",
+               "description": "Obstacle mobile heurté",
+               "full_label": "Obstacle mobile heurté",
+               "keys": {
+                    "-1": "Non renseigné",
+                    "0": "Aucun",
+                    "1": "Piéton",
+                    "2": "Véhicule",
+                    "4": "Véhicule sur rail",
+                    "5": "Animal domestique",
+                    "6": "Animal sauvage",
+                    "9": "Autre"
+               }
+          },
+          "plan": {
+               "load_as": "int",
+               "convert_to": "str",
+               "null_replace_val": "-1",
+               "description": "Tracé en plan",
+               "full_label": "Tracé de la route",
+               "keys": {
+                    "-1": "Non renseigné",
+                    "1": "Partie rectiligne",
+                    "2": "En courbe à gauche",
+                    "3": "En courbe à droite",
+                    "4": "En « S »"
+               }
+          },
+          "prof": {
+               "load_as": "int",
+               "convert_to": "str",
+               "null_replace_val": "-1",
+               "description": "Profil en long décrit la déclivité de la route à l'endroit de l'accident",
+               "full_label": "Inclinaison de la route",
+               "keys": {
+                    "-1": "Non renseigné",
+                    "1": "Plat",
+                    "2": "Pente",
+                    "3": "Sommet de côte",
+                    "4": "Bas de côte"
+               }
+          },
+          "secuexist": {
+               "load_as": "int",
+               "convert_to": "str",
+               "null_replace_val": "-1",
+               "description": "Signale l'existence d'une voie réservée, indépendamment du fait que l'accident ait lieu ou non sur cette voie",
+               "full_label": "Une voie réservée exist",
+               "keys": {
+                    "-1": "Non renseigné",
+                    "0": "Sans objet",
+                    "1": "Piste cyclable",
+                    "2": "Bande cyclable",
+                    "3": "Voie réservée"
+               },
+               "pdf_label": "vosp"
+          },
+          "sexe": {
+               "load_as": "int",
+               "convert_to": "str",
+               "description": "Sexe de l'usager",
+               "full_label": "Sexe de l'usager",
+               "keys": {
+                    "1": "Masculin",
+                    "2": "Féminin"
+               }
+          },
+          "situ": {
+               "load_as": "int",
+               "convert_to": "str",
+               "null_replace_val": "-1",
+               "description": "Type de chemin sur lequel c'est produit l'accident",
+               "full_label": "Situation de l'accident",
+               "keys": {
+                    "-1": "Non renseigné",
+                    "0": "Aucun",
+                    "1": "Sur chaussée",
+                    "2": "Sur bande d'arrêt d'urgence",
+                    "3": "Sur accotement",
+                    "4": "Sur trottoir",
+                    "5": "Sur piste cyclable",
+                    "6": "Sur autre voie spéciale",
+                    "8": "Autres"
+               },
+               "pdf_label": "situ"
+          },
+          "surf": {
+               "load_as": "int",
+               "convert_to": "str",
+               "null_replace_val": "-1",
+               "description": "Etat de la surface sur laquelle c'est produit l'accident",
+               "full_label": "Etat de la surface",
+               "keys": {
+                    "-1": "Non renseigné",
+                    "1": "Normale",
+                    "2": "Mouillée",
+                    "3": "Flaques",
+                    "4": "Inondée",
+                    "5": "Enneigée",
+                    "6": "Boue",
+                    "7": "Verglacée",
+                    "8": "Corps gras – huile",
+                    "9": "Autre"
+               }
+          },
+          "trajet": {
+               "load_as": "int",
+               "convert_to": "str",
+               "null_replace_val": "-1",
+               "description": "Motif du déplacement au moment de l'accident",
+               "full_label": "Motif du déplacement",
+               "keys": {
+                    "-1": "Non renseigné",
+                    "0": "Non renseigné",
+                    "1": "Domicile – travail",
+                    "2": "Domicile – école",
+                    "3": "Courses – achats",
+                    "4": "Utilisation professionnelle",
+                    "5": "Promenade – loisirs",
+                    "9": "Autre"
+               }
+          },
+          "typevehicules": {
+               "load_as": "str",
+               "convert_to": "str",
+               "description": "Catégorie du véhicule",
+               "full_label": "Catégorie du véhicule",
+               "pdf_label": "catv"
+          },
+          "vehiculeid": {
+               "load_as": "str",
+               "convert_to": "str",
+               "description": "Identifiant du véhicule repris pour chacun des usagers occupant ce véhicule (y compris les piétons qui sont rattachés aux véhicules qui les ont heurtés) – Code alphanumérique",
+               "full_label": "Identifiant du véhicule",
+               "pdf_label": "id_vehicule"
+          }
+     }
+}
