@@ -53,7 +53,7 @@ def data_is_outdated(current_dates: dict[str, str]) -> dict[str, bool]:
 
     out = {}
     for data_key in current_dates.keys():
-        file_path = Path(__file__).parent / ".." /\
+        file_path = Path(__file__).parent / ".." / "data" /\
             DATA_DICT[data_key]["info_data_path"]
         with open(file_path, "r", encoding="utf-8") as file:
             info_data = json.load(file)
@@ -95,6 +95,7 @@ def fetch_data(data_keys: list[str],
             with open(file_path, "r", encoding="utf-8") as file:
                 info_data = json.load(file)
                 file.close()
+            print()
         except Exception as e:
             print(f"Error while loading data info for {data_key}")
             print(e)
@@ -106,29 +107,36 @@ def fetch_data(data_keys: list[str],
             # Check the list of files is a list
             if isinstance(info_data["data_info"]["original_file_name"],
                           list):
-                continue
-            if bool(info_data["data_info"]["is_ziped"]):
-                ziped_path = sub_root_folder / info_data["data_info"]\
-                    ["ziped_name"]
-                zip_download_status_flag = urllib.request.urlretrieve(
-                    info_data["data_info"]["data_download_url"],
-                    ziped_path
-                )
-                with ZipFile(ziped_path, "r") as ziped_file:
-                        for file_to_extract in info_data["data_info"]\
-                            ["original_file_name"]:
-                            ziped_file.extract(file_to_extract,
-                                               sub_root_folder)
+                #print("Sub files list functionality not implemented yet. "
+                #      "Cannot process sub files: "
+                #      f"{info_data["data_info"]["original_file_name"]}")
+                #continue
+                if bool(info_data["data_info"]["is_ziped"]):
+                    #print(f"The dataset file: {data_key}. "
+                    #      f"File is ziped: {info_data["data_info"]["is_ziped"]}")
+                    ziped_path = sub_root_folder / info_data["data_info"]\
+                        ["ziped_name"]
+                    #print(f"Ziped file: {ziped_path}")
+                    zip_download_status_flag = urllib.request.urlretrieve(
+                        info_data["data_info"]["data_download_url"],
+                        ziped_path
+                    )
+                    with ZipFile(ziped_path, "r") as ziped_file:
+                            for file_to_extract in info_data["data_info"]\
+                                ["original_file_name"]:
+                                ziped_file.extract(file_to_extract,
+                                                   sub_root_folder)
             else:
                 # Check the list of files is a list
                 if isinstance(info_data["data_info"]["original_file_name"],
                               str):
-                    continue
-                download_status_flag = urllib.request.urlretrieve(
-                    info_data["data_info"]["data_download_url"],
-                    sub_root_folder / info_data["data_info"]["local_file_name"]
-                )
-                pass
+                    #continue
+                    # print(f"url: {info_data["data_info"]["data_download_url"]}")
+                    # print(f"Saved to path: {sub_root_folder / info_data["data_info"]["local_file_name"]}")
+                    download_status_flag = urllib.request.urlretrieve(
+                        info_data["data_info"]["data_download_url"],
+                        sub_root_folder / info_data["data_info"]["local_file_name"]
+                    )
         except HTTPError as e:
             print(f"Incorrect url while fetching data for {data_key} "
                   f"data:\n{e}")

@@ -60,3 +60,8 @@
 .Mui-selected {
   background: var(--selectedDropdownItem) !important;
 }
+
+.mainNavBarDiv{
+  z-index: 99999; /* Makes sure that bar is  */
+  position: relative;
+}

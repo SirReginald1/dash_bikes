@@ -15,7 +15,7 @@ function App() {
     sessionStorage.getItem("themeMode") ?? "dark"
   );
 
-  const [appData, setAppData] = useState(
+  const [accidentData, setAppData] = useState(
     {}
   );
 
@@ -30,7 +30,7 @@ function App() {
                                        "Département"],
                                       ["D2L1",
                                        "D2L2"]];
-  
+       
   /**
    * The array of the same length as the 
    */
@@ -51,16 +51,22 @@ function App() {
                                    ["Localisation des accidents",
                                     "Accidents par région/département"]
                                   ]
-
+                                
+  const [uniqueYears, setUniqueYears] = useState([]);
+                                
   useEffect(() => {
     console.log(`Main page value changed to: ${mainPage}`)
   }, [mainPage]);
 
-
+  // Initial data fetching
   useEffect(() => {
     fetch("/dash_bikes/data").then(res => res.json()).then(setAppData)
-    console.log(appData)
+    //console.log(accidentData.toString())
   }, [])
+
+  useEffect(() => {
+    setUniqueYears([... new Set(accidentData.an)].sort())
+  }, [accidentData])
 
   return (
     <>
@@ -94,6 +100,8 @@ function App() {
           </div>
           <MainPage
             selectedPage={mainPage}
+            uniqueYears={uniqueYears}
+            accidentDataTemp={accidentData}
           />
         </CssBaseline>
       </ThemeProvider>

@@ -1,0 +1,33 @@
+#keyNumbersParentSpan {
+    display: flex;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+#temporalPageRootDiv {
+    justify-items: center;
+    padding-top: 1%;
+}
+
+#topGraphSpan {
+    display: flex;
+    align-items: center;
+    gap: 50px;
+}
+
+.keyNumbersElementDiv {
+    display: grid;
+    /*
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+    */
+}
+
+#keyNumbersParentSpan {
+    gap: 100px;
+}
+
+.keyNumberSpan {
+    font-weight: bold;
+    font-size: xx-large;
+}

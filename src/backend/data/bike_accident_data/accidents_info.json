@@ -1,49 +1,47 @@
 {
      "data_info": {
           "data_download_url": "https://www.data.gouv.fr/api/1/datasets/r/4c75d6c0-c927-48ca-92db-5bcce9f17ae7",
-          "page_url": "https://www.data.gouv.fr/datasets/accidents-de-velo",
-          "is_ziped": false,
-          "keep_original_data": false,
-          "last_updated": "23/02/2026",
-          "sub_data_dir": "bike_accident_data",
-          "original_file_name": "accidentsVelo.csv",
-          "local_file_name": "accidentsVelo.csv",
+          "excluded_variables": [],
           "formated_file_name": "accidentsVelo.json",
-          "excluded_variables": []
+          "is_ziped": false,
+          "keep_original_data": true,
+          "last_updated": "03/04/2026",
+          "local_file_name": "accidentsVelo.csv",
+          "original_file_name": "accidentsVelo.csv",
+          "page_url": "https://www.data.gouv.fr/datasets/accidents-de-velo",
+          "sub_data_dir": "bike_accident_data"
      },
      "var_info": {
           "Num_Acc": {
-               "load_as": "int",
                "convert_to": "int",
                "description": "Identifiant de l'accident identique à celui du fichier \"rubrique CARACTERISTIQUES\" repris pour chacun des véhicules décrits impliqués dans l'accident",
-               "full_label": "Identifiant de l'accident"
+               "full_label": "Identifiant de l'accident",
+               "load_as": "int"
           },
           "age": {
-               "load_as": "int",
                "convert_to": "int",
                "description": "Age de l'usager",
-               "full_label": "Age de l'usager"
+               "full_label": "Age de l'usager",
+               "load_as": "int"
           },
           "agg": {
-               "load_as": "int",
                "convert_to": "str",
                "description": "Si l'accident c'est produit en agglomération ou pas",
                "full_label": "Localisation",
                "keys": {
                     "1": "Hors agglomération",
                     "2": "En agglomération"
-               }
+               },
+               "load_as": "int"
           },
           "an": {
-               "load_as": "int",
                "convert_to": "int",
                "description": "Année de l'accident",
-               "full_label": "Année de l'accident"
+               "full_label": "Année de l'accident",
+               "load_as": "int"
           },
           "atm": {
-               "load_as": "int",
                "convert_to": "str",
-               "null_replace_val": "-1",
                "description": "Conditions atmosphériques l'or de l'accident",
                "full_label": "Conditions atmosphériques",
                "keys": {
@@ -57,10 +55,11 @@
                     "7": "Temps éblouissant",
                     "8": "Temps couvert",
                     "9": "Autre"
-               }
+               },
+               "load_as": "int",
+               "null_replace_val": "-1"
           },
           "catr": {
-               "load_as": "int",
                "convert_to": "str",
                "description": "Type de route sur lequel c'est produit l'accident",
                "full_label": "Catégorie de route",
@@ -73,12 +72,11 @@
                     "6": "Parc de stationnement ouvert à la circulation publique",
                     "7": "Routes de métropole urbaine",
                     "9": "autre"
-               }
+               },
+               "load_as": "int"
           },
           "choc": {
-               "load_as": "int",
                "convert_to": "str",
-               "null_replace_val": "-1",
                "description": "Point de choc initial",
                "full_label": "Point de choc initial",
                "keys": {
@@ -93,12 +91,12 @@
                     "7": "Côté droit",
                     "8": "Côté gauche",
                     "9": "Chocs multiples (tonneaux)"
-               }
+               },
+               "load_as": "int",
+               "null_replace_val": "-1"
           },
           "circ": {
-               "load_as": "int",
                "convert_to": "str",
-               "null_replace_val": "-1",
                "description": "Sens de circulation sur la \"route\" ou c'est produit l'accident",
                "full_label": "Régime de circulation",
                "keys": {
@@ -107,12 +105,12 @@
                     "2": "Bidirectionnelle",
                     "3": "A chaussées séparées",
                     "4": "Avec voies d'affectation variable"
-               }
+               },
+               "load_as": "int",
+               "null_replace_val": "-1"
           },
           "col": {
-               "load_as": "int",
                "convert_to": "str",
-               "null_replace_val": "-1",
                "description": "Type de collision",
                "full_label": "Type de collision",
                "keys": {
@@ -124,31 +122,30 @@
                     "5": "Trois véhicules et plus - collisions multiples",
                     "6": "Autre collision",
                     "7": "Sans collision"
-               }
+               },
+               "load_as": "int",
+               "null_replace_val": "-1"
           },
           "com": {
-               "load_as": "str",
                "convert_to": "str",
                "description": "Le numéro de commune est un code donné par l‘INSEE. Le code est composé du code INSEE du département suivi par 3 chiffres",
-               "full_label": "Commune"
+               "full_label": "Commune",
+               "load_as": "str"
           },
           "date": {
-               "load_as": "str",
                "convert_to": "str",
                "description": "Date de l'accident",
-               "full_label": "Date de l'accident"
+               "full_label": "Date de l'accident",
+               "load_as": "str"
           },
           "dep": {
-               "load_as": "str",
                "convert_to": "str",
                "description": "Code INSEE (Institut National de la Statistique et des Etudes Economiques) du département (2A Corse-du-Sud – 2B Haute-Corse)",
-               "full_label": "Département"
+               "full_label": "Département",
+               "load_as": "str"
           },
           "equipement": {
-               "load_as": "str",
                "convert_to": "str",
-               "null_replace_val": "-1",
-               "split_char": "/",
                "description": "Le renseignement du caractère indique la présence et l'utilisation de l'équipement de sécurité",
                "full_label": "Equipement de sécurité",
                "keys": {
@@ -164,10 +161,12 @@
                     "8": "Non déterminable",
                     "9": "Autre"
                },
-               "pdf_label": "secu1"
+               "load_as": "str",
+               "null_replace_val": "-1",
+               "pdf_label": "secu1",
+               "split_char": "/"
           },
           "grav": {
-               "load_as": "int",
                "convert_to": "str",
                "description": "Gravité de blessure de l'usager, les usagers accidentés sont classés en trois catégories de victimes plus les indemnes",
                "full_label": "Gravité de blessure de l'usager",
@@ -176,18 +175,17 @@
                     "2": "Tué",
                     "3": "Blessé hospitalisé",
                     "4": "Blessé léger"
-               }
+               },
+               "load_as": "int"
           },
           "hrmn": {
-               "load_as": "str",
                "convert_to": "str",
                "description": "Heure et minutes de l'accident",
-               "full_label": "Heure et minutes de l'accident"
+               "full_label": "Heure et minutes de l'accident",
+               "load_as": "str"
           },
           "infra": {
-               "load_as": "int",
                "convert_to": "str",
-               "null_replace_val": "-1",
                "description": "Aménagement et Infrastructure là où s'est produit l'accident",
                "full_label": "Aménagement - Infrastructure",
                "keys": {
@@ -202,10 +200,11 @@
                     "7": "Zone de péage",
                     "8": "Chantier",
                     "9": "Autres"
-               }
+               },
+               "load_as": "int",
+               "null_replace_val": "-1"
           },
           "int": {
-               "load_as": "int",
                "convert_to": "str",
                "description": "Type d'intersection où c'est produit l'accident",
                "full_label": "Intersection",
@@ -219,44 +218,52 @@
                     "7": "Place",
                     "8": "Passage à niveau",
                     "9": "Autre intersection"
-               }
+               },
+               "load_as": "int"
           },
           "jour": {
-               "load_as": "str",
                "convert_to": "str",
                "description": "Jour de l'accident",
-               "full_label": "Jour de l'accident"
+               "full_label": "Jour de l'accident",
+               "load_as": "str"
           },
           "larrout": {
-               "load_as": "str",
                "convert_to": "float",
-               "replace_chars": {",": "."},
                "description": "Largeur de la chaussée affectée à la circulation des véhicules ne sont pas compris les bandes d'arrêt d'urgence, les TPC et les places de stationnement (en m)",
-               "full_label": "Largeur de la chaussée affectée"
+               "full_label": "Largeur de la chaussée affectée",
+               "load_as": "str",
+               "replace_chars": {
+                    ",": "."
+               }
           },
           "lartpc": {
-               "load_as": "str",
                "convert_to": "float",
-               "replace_chars": {",": "."},
                "description": "Largeur du terre-plein central (TPC) s'il existe (en m)",
-               "full_label": "Largeur du terre-plein central"
+               "full_label": "Largeur du terre-plein central",
+               "load_as": "str",
+               "replace_chars": {
+                    ",": "."
+               }
           },
           "lat": {
-               "load_as": "str",
                "convert_to": "float",
-               "replace_chars": {",": "."},
                "description": "Latitude",
-               "full_label": "Latitude"
+               "full_label": "Latitude",
+               "load_as": "str",
+               "replace_chars": {
+                    ",": "."
+               }
           },
           "long": {
-               "load_as": "str",
                "convert_to": "float",
-               "replace_chars": {",": "."},
                "description": "Longitude",
-               "full_label": "Longitude"
+               "full_label": "Longitude",
+               "load_as": "str",
+               "replace_chars": {
+                    ",": "."
+               }
           },
           "lum": {
-               "load_as": "int",
                "convert_to": "str",
                "description": "Conditions d'éclairage dans lesquelles l'accident s'est produit",
                "full_label": "Lumière",
@@ -266,12 +273,11 @@
                     "3": "Nuit sans éclairage public",
                     "4": "Nuit avec éclairage public non allumé",
                     "5": "Nuit avec éclairage public allumé"
-               }
+               },
+               "load_as": "int"
           },
           "manoeuvehicules": {
-               "load_as": "str",
                "convert_to": "str",
-               "null_replace_val": "-1",
                "description": "Manoeuvre principale avant l'accident",
                "full_label": "Manoeuvre du véhicule",
                "keys": {
@@ -304,12 +310,12 @@
                     "8": "Dans le couloir bus, dans le sens inverse",
                     "9": "En s'insérant"
                },
+               "load_as": "str",
+               "null_replace_val": "-1",
                "pdf_label": "manv"
           },
           "manv": {
-               "load_as": "int",
                "convert_to": "str",
-               "null_replace_val": "-1",
                "description": "Manoeuvre principale avant l'accident",
                "full_label": "Manoeuvre principale avant l'accident",
                "keys": {
@@ -341,32 +347,34 @@
                     "7": "Dans le couloir bus, dans le même sens",
                     "8": "Dans le couloir bus, dans le sens inverse",
                     "9": "En s'insérant"
-               }
+               },
+               "load_as": "int",
+               "null_replace_val": "-1"
           },
           "mois": {
-               "load_as": "str",
                "convert_to": "str",
                "description": "Mois de l'accident",
-               "full_label": "Mois de l'accident"
+               "full_label": "Mois de l'accident",
+               "load_as": "str"
           },
           "nbv": {
-               "load_as": "str",
                "convert_to": "int",
-               "replace_with_null": ["#VALEURMULTI"],
                "description": "Nombre total de voies de circulation",
-               "full_label": "Nombre total de voies de circulation"
+               "full_label": "Nombre total de voies de circulation",
+               "load_as": "str",
+               "replace_with_null": [
+                    "#VALEURMULTI"
+               ]
           },
           "numVehicules": {
-               "load_as": "int",
                "convert_to": "int",
                "description": "Permet de situer la place occupée dans le véhicule par l'usager au moment de l'accident. Le détail est donné par l'illustration ci-dessous",
                "full_label": "Place occupée dans le véhicule",
+               "load_as": "int",
                "pdf_label": "place"
           },
           "obs": {
-               "load_as": "int",
                "convert_to": "str",
-               "null_replace_val": "-1",
                "description": "Obstacle fixe heurté",
                "full_label": "Obstacle fixe heurté",
                "keys": {
@@ -389,12 +397,12 @@
                     "7": "Support de signalisation verticale ou poste d'appel d'urgence",
                     "8": "Poteau",
                     "9": "Mobilier urbain"
-               }
+               },
+               "load_as": "int",
+               "null_replace_val": "-1"
           },
           "obsm": {
-               "load_as": "int",
                "convert_to": "str",
-               "null_replace_val": "-1",
                "description": "Obstacle mobile heurté",
                "full_label": "Obstacle mobile heurté",
                "keys": {
@@ -406,12 +414,12 @@
                     "5": "Animal domestique",
                     "6": "Animal sauvage",
                     "9": "Autre"
-               }
+               },
+               "load_as": "int",
+               "null_replace_val": "-1"
           },
           "plan": {
-               "load_as": "int",
                "convert_to": "str",
-               "null_replace_val": "-1",
                "description": "Tracé en plan",
                "full_label": "Tracé de la route",
                "keys": {
@@ -420,12 +428,12 @@
                     "2": "En courbe à gauche",
                     "3": "En courbe à droite",
                     "4": "En « S »"
-               }
+               },
+               "load_as": "int",
+               "null_replace_val": "-1"
           },
           "prof": {
-               "load_as": "int",
                "convert_to": "str",
-               "null_replace_val": "-1",
                "description": "Profil en long décrit la déclivité de la route à l'endroit de l'accident",
                "full_label": "Inclinaison de la route",
                "keys": {
@@ -434,12 +442,12 @@
                     "2": "Pente",
                     "3": "Sommet de côte",
                     "4": "Bas de côte"
-               }
+               },
+               "load_as": "int",
+               "null_replace_val": "-1"
           },
           "secuexist": {
-               "load_as": "int",
                "convert_to": "str",
-               "null_replace_val": "-1",
                "description": "Signale l'existence d'une voie réservée, indépendamment du fait que l'accident ait lieu ou non sur cette voie",
                "full_label": "Une voie réservée exist",
                "keys": {
@@ -449,22 +457,22 @@
                     "2": "Bande cyclable",
                     "3": "Voie réservée"
                },
+               "load_as": "int",
+               "null_replace_val": "-1",
                "pdf_label": "vosp"
           },
           "sexe": {
-               "load_as": "int",
                "convert_to": "str",
                "description": "Sexe de l'usager",
                "full_label": "Sexe de l'usager",
                "keys": {
                     "1": "Masculin",
                     "2": "Féminin"
-               }
+               },
+               "load_as": "int"
           },
           "situ": {
-               "load_as": "int",
                "convert_to": "str",
-               "null_replace_val": "-1",
                "description": "Type de chemin sur lequel c'est produit l'accident",
                "full_label": "Situation de l'accident",
                "keys": {
@@ -478,12 +486,12 @@
                     "6": "Sur autre voie spéciale",
                     "8": "Autres"
                },
+               "load_as": "int",
+               "null_replace_val": "-1",
                "pdf_label": "situ"
           },
           "surf": {
-               "load_as": "int",
                "convert_to": "str",
-               "null_replace_val": "-1",
                "description": "Etat de la surface sur laquelle c'est produit l'accident",
                "full_label": "Etat de la surface",
                "keys": {
@@ -497,12 +505,12 @@
                     "7": "Verglacée",
                     "8": "Corps gras – huile",
                     "9": "Autre"
-               }
+               },
+               "load_as": "int",
+               "null_replace_val": "-1"
           },
           "trajet": {
-               "load_as": "int",
                "convert_to": "str",
-               "null_replace_val": "-1",
                "description": "Motif du déplacement au moment de l'accident",
                "full_label": "Motif du déplacement",
                "keys": {
@@ -514,20 +522,22 @@
                     "4": "Utilisation professionnelle",
                     "5": "Promenade – loisirs",
                     "9": "Autre"
-               }
+               },
+               "load_as": "int",
+               "null_replace_val": "-1"
           },
           "typevehicules": {
-               "load_as": "str",
                "convert_to": "str",
                "description": "Catégorie du véhicule",
                "full_label": "Catégorie du véhicule",
+               "load_as": "str",
                "pdf_label": "catv"
           },
           "vehiculeid": {
-               "load_as": "str",
                "convert_to": "str",
                "description": "Identifiant du véhicule repris pour chacun des usagers occupant ce véhicule (y compris les piétons qui sont rattachés aux véhicules qui les ont heurtés) – Code alphanumérique",
                "full_label": "Identifiant du véhicule",
+               "load_as": "str",
                "pdf_label": "id_vehicule"
           }
      }

@@ -1,4 +1,5 @@
 import TemporalPage from "../pages/TemporalPage.jsx"
+import "./MainPage.css"
 
 
 /**
@@ -6,7 +7,10 @@ import TemporalPage from "../pages/TemporalPage.jsx"
  * @param {String} selectedPage 
  * @returns 
  */
-export default function MainPage({selectedPage}) {
+export default function MainPage({ selectedPage,
+                                   accidentData,
+                                   uniqueYears,
+                                 }) {
 
     /**
      * 
@@ -17,7 +21,10 @@ export default function MainPage({selectedPage}) {
         switch(pageLabel){
             case "Evolution temporelle":
                 return(
-                    <TemporalPage/>
+                    <TemporalPage 
+                        accidentData={accidentData}
+                        uniqueYears={uniqueYears}
+                    />
                 )
             case "Caratéristiques des accidents":
                 return(

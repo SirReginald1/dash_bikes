@@ -6,8 +6,10 @@
 #TODO: Specify raise conditions in doc strings
 # a list of all errors so that they can all be corrected at once
 
+
 from typing import Union, Callable, Any
 import json
+import simplejson as simj
 import sys
 import os
 from pathlib import Path
@@ -554,7 +556,16 @@ def save_to_json_data(data_dict: dict[str, list[Any]],
     """
 
     with open(saving_file_path, "w") as file:
-        json.dump(data_dict, file, indent=10)
+        #json.dump()
+        #json.dump(data_dict,
+        #          file,
+        #          indent=10,
+        #          allow_nan=False,
+        #          ign)
+        simj.dump(data_dict,
+                  file,
+                  indent=10,
+                  ignore_nan=True)
         file.close()
 
 
@@ -569,6 +580,8 @@ def save_datasets_as_json(json_datasets_dict: dict[str, dict[str, list[Any]]],
             root_data_path /\
                 metadata_dict[dataset_key]["data_info"]["formated_file_name"]
         )
+        print(f"json saved to path: {root_data_path /\
+                metadata_dict[dataset_key]["data_info"]["formated_file_name"]}")
 
 
 if __name__ == "__main__":
@@ -578,13 +591,13 @@ if __name__ == "__main__":
         dataset_keys = list(DATA_DICT.keys())
     else:
         dataset_keys = filter_valide_dataset_keys(sys.argv[1:])
-    print(f"sys args: {sys.argv}")
-    print(f"dataset keys: {dataset_keys}")
+    # print(f"sys args: {sys.argv}")
+    # print(f"dataset keys: {dataset_keys}")
     # Load metadata dict
     metadata_dict = load_metadata_dict(dataset_keys,
                                        DATA_DICT,
                                        ROOT_DATA_PATH)
-    print(f"metadata keys: {metadata_dict}")
+    # print(f"metadata keys: {metadata_dict}")
     # Load datasets
     datasets = load_dataset(dataset_keys,
                             metadata_dict,

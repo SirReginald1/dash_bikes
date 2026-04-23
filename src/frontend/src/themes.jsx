@@ -14,6 +14,17 @@ export const lightTheme = createTheme({
         '--sidebarButtonColor': 'white',
         '--sidebarTitleColor': 'red',
       },
+      plotColors: {
+        single_line_color: "steelblue",
+        plot_bgcolor: "#e0e9f4",
+        paper_bgcolor: "white",
+        xaxis_color: "none",
+        xaxis_line_color: "none",
+        xaxis_grid_color: "white",
+        yaxis_grid_color: "white",
+        //legend_text_color: "none",
+        title_color: "rgb(68, 68, 68);",
+      },
     });
 
 export const darkTheme = createTheme({
@@ -29,5 +40,17 @@ export const darkTheme = createTheme({
         '--sidebarColor': '#222',
         '--sidebarButtonColor': 'white',
         '--sidebarTitleColor': 'red',
-      }
+      },
+      plotColors: {
+        single_line_color: "steelblue",
+        plot_bgcolor: "white",
+        paper_bgcolor: "#121212",
+        xaxis_color: "white",
+        yaxis_color: "white",
+        //xaxis_line_color: "none",
+        xaxis_grid_color: "#e2dcdc",
+        yaxis_grid_color: "#e2dcdc",
+        legend_text_color: "white",
+        title_color: "white",
+      },
     });

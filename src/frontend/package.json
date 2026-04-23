@@ -15,9 +15,10 @@
     "@mui/icons-material": "^7.3.7",
     "@mui/material": "^7.3.7",
     "icons-material": "^0.0.1-security",
-    "plotly": "^1.0.6",
+    "plotly.js": "^3.4.0",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "react-plotly.js": "^2.6.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
