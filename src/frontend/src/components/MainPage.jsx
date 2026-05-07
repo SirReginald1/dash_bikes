@@ -1,4 +1,5 @@
 import TemporalPage from "../pages/TemporalPage.jsx"
+import CharacteristicsPage from "../pages/CharacteristicsPage.jsx"
 import "./MainPage.css"
 
 
@@ -28,9 +29,10 @@ export default function MainPage({ selectedPage,
                 )
             case "Caratéristiques des accidents":
                 return(
-                    <span>
-                        Caratéristiques des accidents
-                    </span>
+                    <CharacteristicsPage
+                        accidentData={accidentData}
+                        uniqueYears={uniqueYears}
+                    />
                 )
             case "Localisation des accidents":
                 return(

@@ -16,6 +16,7 @@ export const lightTheme = createTheme({
       },
       plotColors: {
         single_line_color: "steelblue",
+        multi_line_color: ["red", "green", "blue", "steelblue"],
         plot_bgcolor: "#e0e9f4",
         paper_bgcolor: "white",
         xaxis_color: "none",
@@ -43,6 +44,7 @@ export const darkTheme = createTheme({
       },
       plotColors: {
         single_line_color: "steelblue",
+        multi_line_color: ["red", "green", "blue", "steelblue"],
         plot_bgcolor: "white",
         paper_bgcolor: "#121212",
         xaxis_color: "white",

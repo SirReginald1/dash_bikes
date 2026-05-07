@@ -11,7 +11,6 @@ import { getIndexes,
          concatSeasonalData,
          calcResidualsData } from "../utils"
 import "./TemporalPage.css"
-import { darkTheme, lightTheme } from '../themes'
 
 
 export default function TemporalPage({uniqueYears,
