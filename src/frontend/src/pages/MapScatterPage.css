@@ -1,0 +1,35 @@
+#rootDiv {
+    /*display: flex;*/
+    /*width: 100%;*/
+    /*height: 100%;*/
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+#colorVarSelectFormControl {
+    width: 90%;
+}
+
+#contentSpan {
+    display: flex;
+    height: 100% !important;
+}
+
+
+#rootDropdownDiv {
+    width: 20%;
+    display: block;
+    justify-content: center;
+}
+
+#mapDiv {
+    width: 80%;
+    height: 100%;
+    padding: 15px;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+}

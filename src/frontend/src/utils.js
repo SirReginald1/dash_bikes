@@ -25,10 +25,10 @@ export function getIndexes(array, values, subsetIdx = undefined){
             return(out)
         }
         else{
-            for(const filterIdx of subsetIdx){
+            for(const filterIdx of subsetIdx){ 
                 if(values === array[filterIdx]){
                     out.push(filterIdx)
-                }
+                }  
             }
             return(out)
         }
@@ -44,6 +44,44 @@ export function getIndexes(array, values, subsetIdx = undefined){
     for(let i=0;i<array.length;i++){
         if(values === array[i]){
             out.push(i)
+        }
+    }
+    return(out)
+}
+
+/**
+ * Returns the indexes of all numbers in the array that are in-between or
+ * equal the brackets.
+ * @param {Array[Number]} array Array containing numbers to be compared.
+ * @param {Array[Number]} bracket Array with smallest bracket as first element
+ *  and largest bracket as second element.
+ * @returns Array of indexes in the array that are in-between or equal to the
+ * provided brackets.
+ */
+export function getIndexContinuBracket(array, bracket){
+    let out = []
+    for(let i=0;i<array.length;i++){
+        if(array[i] >= bracket[0] & array[i] <= bracket[1]){
+            out.push(i)
+        }
+    }
+    return(out)
+}
+
+/**
+ * Returns the indexes of all numbers in the array that are in-between or
+ * equal the brackets.
+ * @param {Array[Number]} array Array containing numbers to be compared.
+ * @param {Array[Number]} bracket Array with smallest bracket as first element
+ *  and largest bracket as second element.
+ * @returns Set of indexes in the array that are in-between or equal to the
+ * provided brackets.
+ */
+export function getIndexContinuBracketSet(array, bracket){
+    let out = new Set()
+    for(let i=0;i<array.length;i++){
+        if(array[i] >= bracket[0] & array[i] <= bracket[1]){
+            out.add(i)
         }
     }
     return(out)
@@ -92,6 +130,54 @@ export function getIndexesSet(array, values, subsetIdx = undefined){
         if(values === array[i]){
             out.add(i)
         }
+    }
+    return(out)
+}
+
+/**
+ * Concatenate all the values in the provided map.
+ * @param {Map<String, Set>} map Map with sets as values.
+ * @returns Set containing the intersection of all sets in the map.
+ */
+export function concatIdxMap(map){
+    //let setsIter = map.values()
+    //let nextIter = setsIter.next()
+    //let out = nextIter.value
+    //console.log(`iter val type: ${typeof(out)}`)
+    //console.log(`iter val is set: ${out instanceof Set}`)
+    //setsIter.next()
+    //while(!nextIter.done){
+    //    out = out.intersection(setsIter.value)
+    //    setsIter.next()
+    //}
+    //return(out)
+    let vals = [...map.values()]
+    let out = vals[0]
+    for(let i=1;i<map.size;i++){
+        out = vals[i].intersection(out)
+    }
+    return(out)
+}
+
+/**
+ * Extracts the values for each of the provided variables and indexes.
+ * @param {Object} data The object containing the data.
+ * @param {Array[String]} variables Array of variable names that are present in
+ *  the data objects.
+ * @param {Iterable} indexes Iterable containing the indexes of the values to
+ *  be extracted for each of the provided variables.
+ * @returns Map containing
+ */
+export function extractValues(data, variables, indexes){
+    let out = new Map()
+    //let nextIdx = iterator.next()
+    for(const variable of variables){
+        let idxList = []
+        let iter = indexes[Symbol.iterator]()
+        for(const indexe of indexes){
+            idxList.push(data[variable][iter.next().value])
+        }
+        out.set(variable, idxList)
     }
     return(out)
 }
@@ -227,6 +313,22 @@ export function getIndexesCategorical(data,
     }
     return(out)
 }
+
+/**
+ * Builds an array containing all year between the years provided in the
+ * selectedYears array.
+ * @param {Array} selectedYears Array of length 2 with smallest year as fist
+ *  element and largest year as second element.
+ * @returns An array containing all the years in order between the provided
+ * ones.
+ */
+export function buildSelectedYearSet(selectedYears){
+        let years = new Set()
+        for(let i=selectedYears[0];i<=selectedYears[1];i++){
+            years.add(i)
+        }
+        return(years)
+    }
 
 /**
  * Builds a map with the class label as key and number of instances
@@ -499,6 +601,19 @@ export function calcResidualsData(originalData,
             }
         )
     )
+}
+
+/**
+ * Returns true if all elements in the array are integers.
+ * @param {Array} array Array of elements to test.
+ * @returns Boolean indicating if all elements of the array are integers.
+ */
+export function isInteger(array){
+    let out = true
+    for(let i=0;i<array.length;i++){
+        out = out & Number.isInteger(array[i])
+    }
+    return(out)
 }
 
 export const monthList = [

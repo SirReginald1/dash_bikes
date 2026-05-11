@@ -239,6 +239,42 @@ def split_formatting_function_factory(formatting_function: Callable,
     return output
 
 
+def inset_geojson_properties_data(geojson: dict[str, Any],
+                                  insert_data: dict[str, Any]
+                                  ) -> None:
+    """Inserts the provided data into the properties section of each element
+    of the provided geojson.
+    
+    Args:
+        - geojson (dict[str, Any]): Geojson data.
+        - insert_data (dict[str, Any]): Dictionary containing the data
+            to be inserted into the properties section of each geojson element.
+    """
+    for element in geojson["features"]:
+        for insert_key in insert_data:
+            element["properties"][insert_key] = insert_data[insert_key]
+
+
+def format_geojson(geojson: dict[str, Any],
+                   geojson_formatting_metadata: dict[str, Any],
+                   data_to_insert: dict[str, pl.DataFrame] = None,) -> None:
+    """Formats the provided geojson data based on the provided formatting
+    metadata.
+
+    Args:
+        - geojson (dict[str, Any]): The geojson data to format.
+        - data_to_insert (dict[str, pl.DataFrame]): Dictionary of polars data
+            frames containing the data to insert into the geojson data.
+        - geojson_formatting_metadata (dict[str, Any]): The section of the geojson
+            metadata that contains the information on dataset formatting. This
+            metadata also includes information on extra data to insert into the
+            geojson metadata and where to find the inserted data.
+    """
+    # TODO: Implement geojson formatting
+    insert_data_dict = {}
+    inset_geojson_properties_data(geojson, insert_data_dict)
+
+
 def format_data_default(data: pl.DataFrame,
                         var_key_dict: dict[str, dict[str, str]],
                         var_to_exclude: list[str] = None,

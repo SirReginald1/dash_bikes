@@ -1,3 +1,4 @@
 .mainPageRootDiv {
     margin-top: var(--navBarHeight);
+    height: 100%;
 }

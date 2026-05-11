@@ -1,5 +1,7 @@
 import TemporalPage from "../pages/TemporalPage.jsx"
 import CharacteristicsPage from "../pages/CharacteristicsPage.jsx"
+import MapScatterPage from "../pages/MapScatterPage.jsx"
+import MapRegionPage from "../pages/MapRegionPage.jsx"
 import "./MainPage.css"
 
 
@@ -11,6 +13,7 @@ import "./MainPage.css"
 export default function MainPage({ selectedPage,
                                    accidentData,
                                    uniqueYears,
+                                   themeMode
                                  }) {
 
     /**
@@ -36,15 +39,18 @@ export default function MainPage({ selectedPage,
                 )
             case "Localisation des accidents":
                 return(
-                    <span>
-                        Localisation des accidents
-                    </span>
+                    <MapScatterPage
+                        accidentData={accidentData}
+                        uniqueYears={uniqueYears}
+                        //themeMode={themeMode}
+                    />
                 )
             case "Accidents par région/département":
                 return(
-                    <span>
-                        Accidents par région/département
-                    </span>
+                    <MapRegionPage
+                        accidentData={accidentData}
+                        uniqueYears={uniqueYears}
+                    />
                 )
         }
     }

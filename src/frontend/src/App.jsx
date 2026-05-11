@@ -40,7 +40,7 @@ function App() {
 
   const [sideBarOpen, setSideBarOpen] = useState(false);
 
-  const [mainPage, setMainPage] = useState("First page");
+  const [mainPage, setMainPage] = useState("Evolution temporelle");
 
   /* The title for each menu section in the side bar */
   const sidebarMenuSectionTitles = ["Visualisation", "Cartes interactives"];
@@ -90,7 +90,7 @@ function App() {
               )}
             />
           </div>
-          <div className='sideBarParentDiv'>
+          <div id='sideBarParentDiv'>
             <Sidebar
               isOpen={sideBarOpen}
               menuSectionTitles={sidebarMenuSectionTitles}
@@ -102,6 +102,7 @@ function App() {
             selectedPage={mainPage}
             uniqueYears={uniqueYears}
             accidentDataTemp={accidentData}
+            //themeMode={themeMode}
           />
         </CssBaseline>
       </ThemeProvider>

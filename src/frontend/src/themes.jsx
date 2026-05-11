@@ -23,7 +23,7 @@ export const lightTheme = createTheme({
         xaxis_line_color: "none",
         xaxis_grid_color: "white",
         yaxis_grid_color: "white",
-        //legend_text_color: "none",
+        legend_text_color: "black",
         title_color: "rgb(68, 68, 68);",
       },
     });
