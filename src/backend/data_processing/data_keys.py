@@ -40,7 +40,7 @@ DATA_DICT = {
     },
     POPULATION_DOWNLOAD_KEY: {
         "info_data_path": "population/population_data_info.json",
-        "sub_data_keys": ["departements", "communes", "regions"],
+        #"sub_data_keys": ["departements", "communes", "regions"],
         #"polars_schema": DATA_SCHEMAS.get(POPULATION_DOWNLOAD_KEY),
         #"formating_function": FORMATING_FUNCTIONS[POPULATION_DOWNLOAD_KEY]
     },

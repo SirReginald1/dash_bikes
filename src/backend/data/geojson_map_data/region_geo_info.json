@@ -4,10 +4,29 @@
           "page_url": "https://raw.githubusercontent.com/gregoiredavid/france-geojson/master/regions.geojson",
           "last_updated": "23/02/2026",
           "is_ziped": false,
-          "keep_original_data": false,
+          "keep_original_data": true,
           "original_file_name": "NA",
           "sub_data_dir": "geojson_map_data",
           "local_file_name": "region_geo.geojson",
           "formated_file_name": "accidentsVelo.json"
-     }
+     },
+     "merging_data": {
+        "population": {
+            "regions": {
+                "match_current_data_key": ["properties", "code"],
+                "match_other_data_key": "REG",
+                "insert_data_to": ["properties"],
+                "vars": [
+                    {
+                        "var": "PTOT",
+                        "new_var_name": "pop"
+                    },
+                    {
+                        "var": "Région",
+                        "new_var_name": "nom"
+                    }
+                ]
+            }
+        }
+    }
 }

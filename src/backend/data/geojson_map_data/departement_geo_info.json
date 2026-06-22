@@ -4,10 +4,29 @@
         "data_download_url": "https://raw.githubusercontent.com/gregoiredavid/france-geojson/master/departements-avec-outre-mer.geojson",
         "last_updated": "18/02/2026",
         "is_ziped": false,
-        "keep_original_data": false,
+        "keep_original_data": true,
         "sub_data_dir": "geojson_map_data",
         "original_file_name": "NA",
         "local_file_name": "departement_geo.geojson",
-          "formated_file_name": "accidentsVelo.json"
+        "formated_file_name": "accidentsVelo.json"
+    },
+    "merging_data": {
+        "population": {
+            "departements": {
+                "match_current_data_key": ["properties", "code"],
+                "match_other_data_key": "DEP",
+                "insert_data_to": ["properties"],
+                "vars": [
+                    {
+                        "var": "PTOT",
+                        "new_var_name": "pop"
+                    },
+                    {
+                        "var": "Région",
+                        "new_var_name": "nom_region"
+                    }
+                ]
+            }
+        }
     }
 }

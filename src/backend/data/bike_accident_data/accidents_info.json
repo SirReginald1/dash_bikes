@@ -9,7 +9,8 @@
           "local_file_name": "accidentsVelo.csv",
           "original_file_name": "accidentsVelo.csv",
           "page_url": "https://www.data.gouv.fr/datasets/accidents-de-velo",
-          "sub_data_dir": "bike_accident_data"
+          "sub_data_dir": "bike_accident_data",
+          "load_var_info_keys_exclude": ["convert_to", "load_as"]
      },
      "var_info": {
           "Num_Acc": {

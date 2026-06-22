@@ -3,7 +3,7 @@
           "data_download_url": "https://www.insee.fr/fr/statistiques/fichier/8680726/ensemble.zip",
           "last_updated": "23/02/2026",
           "is_ziped": true,
-          "keep_original_data": false,
+          "keep_original_data": true,
           "ziped_name": "pop_ziped.zip",
           "sub_data_dir": "population",
           "original_file_name": [
@@ -16,7 +16,70 @@
                "donnees_communes.csv",
                "donnees_regions.csv"
           ],
+          "sub_data_keys": [
+               "departements",
+               "communes",
+               "regions"
+          ],
+          "separator": ";",
           "formated_file_name": "accidentsVelo.json",
           "page_url": "https://www.insee.fr/fr/statistiques/8680726?sommaire=8681011"
+     },
+     "var_info": {
+          "REG": {
+               "convert_to": "int",
+               "description": "Code region",
+               "load_as": "int"
+          },
+          "Région": {
+               "convert_to": "str",
+               "description": "Nom de region",
+               "load_as": "str"
+          },
+          "DEP": {
+               "convert_to": "str",
+               "description": "Code departement",
+               "load_as": "str"
+          },
+          "Département": {
+               "convert_to": "str",
+               "description": "Nom departement",
+               "load_as": "str"
+          },
+          "NBARR": {
+               "convert_to": "int",
+               "description": "Nombre d'arrondissement",
+               "load_as": "int"
+          },
+          "NBCAN": {
+               "convert_to": "int",
+               "description": "Nombre de canton",
+               "load_as": "int"
+          },
+          "NBCOM": {
+               "convert_to": "int",
+               "description": "Nombre de commune",
+               "load_as": "int"
+          },
+          "PMUN": {
+               "convert_to": "int",
+               "description": "??????",
+               "load_as": "int"
+          },
+          "PTOT": {
+               "convert_to": "int",
+               "description": "Population total",
+               "load_as": "int"
+          },
+          "CODCOM": {
+               "convert_to": "int",
+               "description": "Cod fichier commune",
+               "load_as": "int"
+          },
+          "COM": {
+               "convert_to": "str",
+               "description": "Code commune",
+               "load_as": "str"
+          }
      }
 }
