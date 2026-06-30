@@ -10,11 +10,36 @@ import ContinuFilterSelector from './ContinuFilterSelector.jsx'
 import "./FilterSelection.css"
 
 
-// TODO: make options unselectable if
+// TODO: make options unselectable if they don't exist du to current filter selection
+/**
+ * 
+ * @param {Object} accidentData Object containing data to be filtered.
+ * @param {Object} variableKeyMap Object containing the metadata.
+ * @param {Function} setFilterMapFunction The function that sets the values
+ *  used for data filtering. This function must take as parameters in order:
+ *  - String: The name of the variable to filter.
+ *  - Array: That contains all the values to keep.
+ *  - Number: Default set to undefined. The value that will be included in
+ *    all filter output (used when includeNullVals is set to true).
+ * @param {Boolean} includeNullVals If true will check if "null_replace_val"
+ *  and "accepted_range" are present in the metadata for each continuous
+ *  variable. If so the all values equal to "null_replace_val" will be included
+ *  in all slider selections and the min and max selectable values will be set
+ *  using "accepted_range". If false all values present in the data will be
+ *  selectable.
+ * @param {Array[String]} excludedVars Contains the variables to be excluded
+ *  from the selection.
+ * @param {Array[String]} categoricalVars Not implemented yet.
+ * @param {Array[String]} continuousVars Not implemented yet.
+ * @returns The filter selection component.
+ */
 export default function FilterSelection({accidentData,
                                          variableKeyMap,
-                                         filterMap,
-                                         setFilterMapFunction
+                                         setFilterMapFunction,
+                                         includeNullVals = true,
+                                         excludedVars = [],
+                                         categoricalVars = [],
+                                         continuousVars = []
                                         }){
 
     function buildValueLookupMap(variableKeyMap){
@@ -24,6 +49,10 @@ export default function FilterSelection({accidentData,
         }
         return(out)
     }
+
+    //if(excludedVars === undefined){
+    //    excludedVars = []
+    //}
 
     //const valueLookupMap = new Map(buildValueLookupMap(variableKeyMap))
 
@@ -53,51 +82,70 @@ export default function FilterSelection({accidentData,
         let out = []
         let keyIdx = 0
         for(const [key, value] of Object.entries(variableKeyMap)){
-            if(Object.hasOwn(value, "keys")){
-                //console.log(`key: ${key}, value: ${Object.entries(value)}`)
-                //console.log(`Select: key map type: ${typeof(variableKeyMap[key]["keys"])}`)
-                //console.log(`Select: key map: ${Object.entries(variableKeyMap[key]["keys"])}`)
-                //console.log(`key: ${key}, description: ${Object.keys(value)}`)
-                out.push(
-                    <CatFilterSelector
-                        key={keyIdx}
-                        variable={key}
-                        dropdownLabel={variableKeyMap[key]["description"]}
-                        options={Object.entries(variableKeyMap[key]["keys"])}
-                        selectionFunction={setFilterMapFunction}
-                    />
-                    //<Autocomplete
-                    //    multiple
-                    //    clearOnEscape
-                    //    id={`autocomp-${key}`}
-                    //    //label={variableKeyMap["description"]}
-                    //    onChange={(event, op) => selectionFunction(key, op)}
-                    //    options={Object.entries(variableKeyMap[key]["keys"])}
-                    //    getOptionLabel={(option) => (option[1])}
-                    //    //filterSelectedOptions
-                    //    renderInput={(params) => (
-                    //        <TextField
-                    //            {...params}
-                    //            label={variableKeyMap[key]["description"]}
-                    //        />
-                    //    )}
-                    ///>
-                )
+            //console.log(`tested key included: ${key}`)
+            if(!excludedVars.includes(key)){
+                //console.log(`key included: ${key}`)
+                if(Object.hasOwn(value, "keys")){
+                    //console.log(`key: ${key}, value: ${Object.entries(value)}`)
+                    //console.log(`Select: key map type: ${typeof(variableKeyMap[key]["keys"])}`)
+                    //console.log(`Select: key map: ${Object.entries(variableKeyMap[key]["keys"])}`)
+                    //console.log(`key: ${key}, description: ${Object.keys(value)}`)
+                    
+                    out.push(
+                        <CatFilterSelector
+                            key={keyIdx}
+                            variable={key}
+                            dropdownLabel={variableKeyMap[key]["full_label"]}
+                            options={Object.entries(variableKeyMap[key]["keys"])}
+                            selectionFunction={setFilterMapFunction}
+                        />
+                        //<Autocomplete
+                        //    multiple
+                        //    clearOnEscape
+                        //    id={`autocomp-${key}`}
+                        //    //label={variableKeyMap["description"]}
+                        //    onChange={(event, op) => selectionFunction(key, op)}
+                        //    options={Object.entries(variableKeyMap[key]["keys"])}
+                        //    getOptionLabel={(option) => (option[1])}
+                        //    //filterSelectedOptions
+                        //    renderInput={(params) => (
+                        //        <TextField
+                        //            {...params}
+                        //            label={variableKeyMap[key]["description"]}
+                        //        />
+                        //    )}
+                        ///>
+                    )
+                }
+                else{
+                    //console.log(`key list: ${Object.keys()}`)
+                    //console.log(`key: ${key}`)
+                    // Include null values in all selection filters if null value specified in metadata
+                    let nullReplaceValue = undefined
+                    let setMin = undefined
+                    let setMax = undefined
+                    if(includeNullVals & Object.hasOwn(variableKeyMap[key], "null_replace_val")){
+                        nullReplaceValue = variableKeyMap[key]["null_replace_val"]
+                    }
+                    if(Object.hasOwn(variableKeyMap[key], "accepted_range")){
+                        setMin = variableKeyMap[key]["accepted_range"][0]
+                        setMax = variableKeyMap[key]["accepted_range"][1]
+                    }
+                    out.push(
+                        <ContinuFilterSelector
+                            key={keyIdx}
+                            dataArray={accidentData[key]}
+                            variableDescription={variableKeyMap[key]["full_label"]}
+                            variable={key}
+                            selectionFunction={setFilterMapFunction}
+                            nullReplaceValue={nullReplaceValue}
+                            setMin={setMin}
+                            setMax={setMax}
+                        />
+                    )
+                }
+                keyIdx++
             }
-            else{
-                //console.log(`key list: ${Object.keys()}`)
-                //console.log(`key: ${key}`)
-                out.push(
-                    <ContinuFilterSelector
-                        key={keyIdx}
-                        dataArray={accidentData[key]}
-                        variableDescription={variableKeyMap[key]["description"]}
-                        variable={key}
-                        selectionFunction={setFilterMapFunction}
-                    />
-                )
-            }
-            keyIdx++
         }
         return(out)
     }

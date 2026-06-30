@@ -1,7 +1,13 @@
 {
      "data_info": {
           "data_download_url": "https://www.data.gouv.fr/api/1/datasets/r/4c75d6c0-c927-48ca-92db-5bcce9f17ae7",
-          "excluded_variables": [],
+          "excluded_variables": [
+               "Num_Acc",
+               "plan",
+               "numVehicules",
+               "typevehicules",
+               "vehiculeid"
+          ],
           "formated_file_name": "accidentsVelo.json",
           "is_ziped": false,
           "keep_original_data": true,
@@ -26,11 +32,13 @@
                "short_label": "Age",
                "load_as": "int",
                "cat_group": {
-                    "Moins de 18ans": [0, 17],
+                    "Moins de 18 ans": [0, 17],
                     "Entre 18 et 29 ans": [18, 29],
                     "Entre 30 et 49 ans": [30, 49],
                     "Plus de 50 ans": [50, 9999]
-               }
+               },
+               "null_replace_val": -1,
+               "accepted_range": [0, 110]
           },
           "agg": {
                "convert_to": "str",
@@ -176,14 +184,14 @@
           },
           "grav": {
                "convert_to": "str",
-               "description": "Gravité de blessure de l'usager, les usagers accidentés sont classés en trois catégories de victimes plus les indemnes",
-               "full_label": "Gravité de blessure de l'usager",
+               "description": "Gravité des blessures de l'usager, les usagers accidentés sont classés en trois catégories de victimes plus les indemnes",
+               "full_label": "Gravité des blessures de l'usager",
                "short_label": "Gravité",
                "keys": {
                     "1": "Indemne",
-                    "2": "Tué",
+                    "4": "Blessé léger",
                     "3": "Blessé hospitalisé",
-                    "4": "Blessé léger"
+                    "2": "Tué"
                },
                "load_as": "int"
           },

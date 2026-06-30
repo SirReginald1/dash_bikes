@@ -13,7 +13,12 @@ import "./MainPage.css"
 export default function MainPage({ selectedPage,
                                    accidentData,
                                    uniqueYears,
-                                   themeMode
+                                   themeMode,
+                                   metadata,
+                                   geojsonData,
+                                   zoneIndexMap,
+                                   zoneComputedData,
+                                   loadingGeoJsonData,
                                  }) {
 
     /**
@@ -33,8 +38,9 @@ export default function MainPage({ selectedPage,
             case "Caratéristiques des accidents":
                 return(
                     <CharacteristicsPage
-                        accidentData={accidentData}
                         uniqueYears={uniqueYears}
+                        accidentData={accidentData}
+                        variableKeyMap={metadata}
                     />
                 )
             case "Localisation des accidents":
@@ -42,6 +48,7 @@ export default function MainPage({ selectedPage,
                     <MapScatterPage
                         accidentData={accidentData}
                         uniqueYears={uniqueYears}
+                        variableKeyMap={metadata}
                         //themeMode={themeMode}
                     />
                 )
@@ -50,6 +57,11 @@ export default function MainPage({ selectedPage,
                     <MapRegionPage
                         accidentData={accidentData}
                         uniqueYears={uniqueYears}
+                        geojsonData={geojsonData}
+                        zoneIndexMap={zoneIndexMap}
+                        zoneComputedData={zoneComputedData}
+                        variableMetadata={metadata}
+                        loadingGeoJsonData={loadingGeoJsonData}
                     />
                 )
         }

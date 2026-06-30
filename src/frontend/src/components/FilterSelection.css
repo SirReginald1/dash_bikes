@@ -2,3 +2,11 @@
     gap: 15px;
     width: 90%;
 }
+
+
+#controlParentDiv {
+    overflow-y: auto;
+    overflow-x: hidden;
+    /*background-color: aqua;*/
+    height: 100%;
+}

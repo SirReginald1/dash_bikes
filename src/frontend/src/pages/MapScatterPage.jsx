@@ -9,13 +9,14 @@ import "./MapScatterPage.css"
 
 
 export default function MapScatterPage({uniqueYearsTemp,
-                                        accidentDataTemp,
-                                        variableKeyMapTemp,
+                                        accidentData,
+                                        variableKeyMap,
                                         uniqueVariablesTemp,
                                         themeMode}){
 
     // DEBUG
-    let accidentData ={
+    /*
+    let accidentDataTemp ={
         an:     [2025,      2026,   2024,   2026,   2023,   2026,   2025,      2026,   2024,   2026,   2023,   2026,    2024],
         grav:   [2,         2,      2,      3,      1,      2,      2,         2,      2,      3,      1,      2,       1],
         mois:   ["juillet", "juin", "mai", "avril", "juin", "juin", "juillet", "juin", "mai", "avril", "juin", "juin", "septembre"],
@@ -24,7 +25,7 @@ export default function MapScatterPage({uniqueYearsTemp,
         lat:    [45,        45.1,   45.2,   45.3,   45.4,   45.5,   45.6,       45.7,   45.8,  45.9,    46,     46.1,   46.2],
     }
 
-    let variableKeyMap = {
+    let variableKeyMapTemp = {
         grav: {
             keys: {"1": "Indemne", "2": "Tué", "3": "Blessé hospitalisé", "4": "Blessé léger"},
             full_label: "Gravité de blessure de l'usager",
@@ -44,6 +45,7 @@ export default function MapScatterPage({uniqueYearsTemp,
                }
         }
     }
+    */
     //
     const theme = useTheme();
     
@@ -55,18 +57,20 @@ export default function MapScatterPage({uniqueYearsTemp,
 
     const plotRef = useRef(null);
 
+    const varsExcludedFromSelection = ['date', 'hrmn', 'dep', 'lat', 'lon']
+
     let mapTextArray = []
     for(let i=0;i<accidentData.lat.length;i++){
         // TODO: Make string building a loop
         mapTextArray.push(
             `Latitude: ${accidentData['lat'][i]}<br>` +
             `Longitude: ${accidentData['lon'][i]}<br>` +
-            `${variableKeyMap['grav']['description']}: ${variableKeyMap['grav']['keys'][`${accidentData['grav'][i]}`]}<br>` +
-            `${variableKeyMap['age']['description']}: ${accidentData['age'][i]}<br>`
+            `${variableKeyMap['grav']['full_label']}: ${variableKeyMap['grav']['keys'][`${accidentData['grav'][i]}`]}<br>` +
+            `${variableKeyMap['age']['full_label']}: ${accidentData['age'][i]}<br>`
         )
     }
 
-    const layout = useMemo(() => {
+    const layout = useMemo(() => { 
         if(colorVarSelected === 'None'){
             return({
                 //autosize: true,
@@ -102,7 +106,7 @@ export default function MapScatterPage({uniqueYearsTemp,
                     },
                 })
             }
-            console.log(`legend color: ${theme.plotColors.legend_text_color}`)
+            //console.log(`legend color: ${theme.plotColors.legend_text_color}`)
             return({
                 //autosize: true,
                 plot_bgcolor: theme.plotColors.plot_bgcolor,
@@ -188,6 +192,7 @@ export default function MapScatterPage({uniqueYearsTemp,
                         texts.push(mapTextArray[index])
                         //console.log(`index loop: ${index}, latitude: ${accidentData['lat'][index]}, longitude: ${accidentData['lon'][index]}`)                            
                     }
+                    //console.log(``)
                     out.push({
                         type: 'scattermap',
                         lat: latitudes,
@@ -195,8 +200,16 @@ export default function MapScatterPage({uniqueYearsTemp,
                         text: texts,
                         mode: 'markers',
                         name: value,
+                        cluster: {
+                            enabled: false,
+                            opacity: 0.8,
+                            //maxzoom: 10,
+                            //size: 100,
+                            step: 0.9
+                        },
                         marker: {
                             size: 8,
+                            opacity: 0.8,
                             color: theme.plotColors.multi_line_color[idx]
                         }
                     })
@@ -280,6 +293,7 @@ export default function MapScatterPage({uniqueYearsTemp,
         Plotly.react(plotRef.current, traces, layout)
     }, [traces, colorVarSelected])
     
+    // TODO: Try to clean up logic for this function 
     /**
      * Function that is passed to each selector element to set that map
      * of selected indexes.
@@ -287,13 +301,23 @@ export default function MapScatterPage({uniqueYearsTemp,
      *  object.
      * @param {Array[String | Number]} values Array containing all the selected
      *  values.
+     * @param {Number} includeValues A value to include in every selection.
+     *  Used to include "null" values. Default is undefined.
      */
-    function setFilterMap(variable, values){
+    function setFilterMap(variable, values, includeValues = undefined){
+        // Var is categorical
         if(Object.hasOwn(variableKeyMap[variable], 'keys')){
             let valueSet = new Set()
             for(const paire of values){
+                // Try to clean up this logic
                 if(values instanceof Array){
-                    valueSet.add(Number(paire[0]))
+                    // Allow this to work for strings
+                    if(Number.isNaN(Number(paire[0]))){
+                        valueSet.add(paire[0])    
+                    }
+                    else{
+                        valueSet.add(Number(paire[0]))
+                    }
                 }
                 else{
                     valueSet.add(paire)
@@ -317,7 +341,12 @@ export default function MapScatterPage({uniqueYearsTemp,
             else{
                 filterMap.current.set(
                     variable,
-                    getIndexContinuBracketSet(accidentData[variable], values)
+                    getIndexContinuBracketSet(
+                        accidentData[variable],
+                        values,
+                        includeValues
+                        //variableKeyMap[variable]["null_replace_val"]
+                    )
                 )
             }
         }
@@ -356,15 +385,17 @@ export default function MapScatterPage({uniqueYearsTemp,
                                     None
                                 </MenuItem>
                             ].concat(Object.keys(variableKeyMap).map((key, idx) => {
-                                return(
-                                    <MenuItem
-                                        className="navbarMenuItem"
-                                        key={key}
-                                        value={key}
-                                    >
-                                        {variableKeyMap[key]['description']}
-                                    </MenuItem>
-                                )
+                                if(!varsExcludedFromSelection.includes(key)){
+                                    return(
+                                        <MenuItem
+                                            className="navbarMenuItem"
+                                            key={key}
+                                            value={key}
+                                        >
+                                            {variableKeyMap[key]['full_label']}
+                                        </MenuItem>
+                                    )
+                                }
                             }))}
                         </Select>
                     </FormControl>
@@ -374,8 +405,9 @@ export default function MapScatterPage({uniqueYearsTemp,
                     <FilterSelection
                         accidentData={accidentData}
                         variableKeyMap={variableKeyMap}
-                        filterMap={filterMap}
+                        //filterMap={filterMap}
                         setFilterMapFunction={setFilterMap}
+                        excludedVars={varsExcludedFromSelection}
                     />
                 </div>
                 <div id='mapDiv'>

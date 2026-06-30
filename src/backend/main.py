@@ -17,6 +17,13 @@ BUILT_DIRECTORY = THIS_FILE_PATH / ".." / "frontend" / "dist"
 
 SERVED_DATA_FILE_PATH = THIS_FILE_PATH / "data" / "accidentsVelo.json"
 
+SERVED_METADATA_FILE_PATH = THIS_FILE_PATH / "data" / "metadata.json"
+
+SERVED_REG_GEOJSON_FILE_PATH = THIS_FILE_PATH / "data" / "geojson_map_data" \
+    / "region_geo.geojson"
+
+SERVED_DEP_GEOJSON_FILE_PATH = THIS_FILE_PATH / "data" / "geojson_map_data" \
+    / "departement_geo.geojson"
 
 AUTHORIZED_ORIGINS = ["*"]
 
@@ -95,12 +102,41 @@ async def serve_dashboard_app():
 def serve_dashboard_data():
     """Serves all data needed for the dashboard."""
 
-    with open(SERVED_DATA_FILE_PATH, "r") as data_file:
+    with open(SERVED_DATA_FILE_PATH, "r", encoding="utf-8") as data_file:
         data = json.load(data_file)
         data_file.close()
     return data
 
+@bike_accident_dashboard.get("/metadata")
+def serve_dashboard_metadata():
+    """Serves the metadata containing all the data descriptions."""
 
+    with open(SERVED_METADATA_FILE_PATH, "r", encoding="utf-8") as file:
+        metadata = json.load(file)
+        file.close()
+    return metadata
+
+@bike_accident_dashboard.get("/reg_map")
+def serve_dashboard_metadata():
+    """Serves the geojson map for regions."""
+
+    with open(SERVED_REG_GEOJSON_FILE_PATH, "r", encoding="utf-8") as file:
+        mapdata = json.load(file)
+        file.close()
+    return mapdata
+
+@bike_accident_dashboard.get("/dep_map")
+def serve_dashboard_metadata():
+    """Serves the geojson map for departements."""
+
+    with open(SERVED_DEP_GEOJSON_FILE_PATH, "r", encoding="utf-8") as file:
+        mapdata = json.load(file)
+        file.close()
+    return mapdata
+
+
+# TODO: Add args parameter to choose if data should be permanently loaded
+# into memory
 if __name__ == "__main__":
     index_file = BUILT_DIRECTORY / "index.html"
     # print(f"Debug filename: \n{index_file}")
