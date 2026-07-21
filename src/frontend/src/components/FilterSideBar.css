@@ -1,0 +1,6 @@
+#rootSideBar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 20%;
+}

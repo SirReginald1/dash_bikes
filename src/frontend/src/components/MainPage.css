@@ -1,5 +1,74 @@
+#rootSideBar {
+    /*width: 100%;*/
+    /*transition: transform 0.3s ease-in-out;
+    transition: width 0.3s;*/
+    transition: flex 2s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#mainSpan {
+    /*display: inline-flex;*/
+    /*grid-column: 1 / 2;*/
+    /*flex-direction: row;*/
+    /*justify-content: right;
+    gap: 0px;
+    width: 100%;*/
+    display: flex;
+    /*width: 400px;
+    height: 50px;*/
+    border: 1px solid #333;
+}
+
 .mainPageRootDiv {
     margin-top: var(--navBarHeight);
     height: 100%;
     background-color: blueviolet;
+}
+
+#mainContentRoot {
+    /*transition: transform 0.3s ease-in-out;*/
+    /*transition: width 0.3s;
+    background-color: rgb(30, 55, 5);
+    width: 100%;*/
+    transition: flex 0.4s ease;
+    display: flex;
+    /*align-items: center;*/
+    justify-content: center;
+}
+
+.openMain {
+    /*
+    -webkit-transform: scale(0.8);
+    -ms-transform: scale(0.8);
+    transform: scale(0.8);
+    */
+    /*width: 80% !important;*/
+    flex: 1;      /* 100% */
+    background: steelblue;
+    color: white;
+
+}
+
+.closeMain {
+    /*transform: scale(1);*/
+    /*width: 100% !important;*/
+    flex: 1; /* 20% */
+    
+}
+
+.open {
+    /*transform: scaleX(1);
+    width: 0%;*/
+    flex: 4; /* 80% */
+}
+
+.closed {
+    /*transform: scaleX(0);
+    width: 100%;*/
+    flex: 0;      /* 0% */
+    overflow: hidden;
+    background: tomato;
+    color: white;
 }

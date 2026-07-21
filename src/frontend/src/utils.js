@@ -162,9 +162,11 @@ export function getIndexesSet(array, values, subsetIdx = undefined){
 /**
  * Concatenate all the values in the provided map.
  * @param {Map<String, Set>} map Map with sets as values.
+ * @param {Set[String]} excludedVars Set containing the variables to exclude
+ * from the concatenation. Default undefined.
  * @returns Set containing the intersection of all sets in the map.
  */
-export function concatIdxMap(map){
+export function concatIdxMap(map, excludedVars = undefined){
     //let setsIter = map.values()
     //let nextIter = setsIter.next()
     //let out = nextIter.value
@@ -180,6 +182,40 @@ export function concatIdxMap(map){
     let out = vals[0]
     for(let i=1;i<map.size;i++){
         out = vals[i].intersection(out)
+    }
+    return(out)
+}
+
+/**
+ * Concatenate all the values in the provided map.
+ * @param {Map<String, Set>} map Map with sets as values.
+ * @param {Set[String]} excludedVars Set containing the variables to exclude
+ * from the concatenation. Default undefined.
+ * @returns Set containing the intersection of all sets in the map.
+ */
+export function concatIdxMapSet(map, excludedVars = undefined){
+    let out = new Set()
+    if(map.size === 0){
+        return(out)
+    }
+    let iterator = map.entries()
+    if(excludedVars === undefined){
+        out = iterator.next().value[1]
+        for(let [k, v] of iterator){
+            out = out.intersection(v)
+        }
+        return(out)
+    }
+    let firstEntry = iterator.next()
+    if(excludedVars.has(firstEntry.key)){
+        out = iterator.next().value[1]
+    }
+    else{
+        out = firstEntry.value[1]
+    }
+    for(let [k, v] of iterator){
+        if(!excludedVars.has(k))
+            out = out.intersection(v)
     }
     return(out)
 }
@@ -248,6 +284,39 @@ export function filterByValuesSet(data, matchValues){
 }
 
 /**
+ * For a given filter map and given data will return a map if indexes
+ * for each Set of values in the filter map.
+ * @param {Object} data The javascript object containing the data.
+ * @param {Map<String, Set>} filterMap Map with variable names as keys and
+ * and Sets of values to be found in the key variable data.
+ * @param {Set[String]} excludeVars Set containing all the variables that
+ * should not be included in outputted map. If Set contains variables that
+ * are not in the data they are ignored.
+ * @param {Set[Number]} subsetIdx Set containing the indexes that should not
+ * be included in the output.
+ * @returns Map with variables as keys and Sets of indexes as values.
+ */
+export function extractIdxFromFilterMap(data,
+                                        filterMap,
+                                        excludeVars = undefined,
+                                        subsetIdx = undefined){
+    let out = new Map()
+    if(excludeVars == undefined){
+        for(let [k, v] of filterMap){
+            out.set(k, getIndexesSet(data[k], v, subsetIdx))
+        }
+        return(out)
+    }
+    for(let [k, v] of filterMap){
+        if(!usedExcludedVars.has(k)){
+            out.set(k, getIndexesSet(data[k], v, subsetIdx))
+        }
+    }
+    return(out)
+
+}
+
+/**
  * Builds a map with the class label as key and array of indexes for each
  *  class.
  * @param {Object} data The object containing the data.
@@ -286,9 +355,7 @@ export function groupDataIdx(data, variable, groups, idxSubset = undefined){
                 }).filter((index) => index !== -1)
             )
         }
-        
     }
-    
     return(out)
 }
 
@@ -539,17 +606,23 @@ export function groupDataCount(data, variable, groups, idxSubset = undefined){
  *  counted.
  * @param {String} variable The name of the variable in which to look for the
  *  values.
+ * @param {Array} idxSubset Optional array of valid data row to compare.
+ *  Default: undefined.
  * @returns Array containing the count for each of the values provided in
  *  valuesToCount. The counts are in the same order as in valuesToCount.
  */
-export function countValues(data, valuesToCount, variable){
+export function countValues(data,
+                            valuesToCount,
+                            variable,
+                            idxSubset = undefined){
     let count = new Array(valuesToCount.length)
     let filterMap = new Map()
     for(let i=0;i<valuesToCount.length;i++){
         filterMap.set(variable, valuesToCount[i])
         count[i] = filterByValues(
             data,
-            filterMap
+            filterMap,
+            idxSubset
         ).length
     }
     return(count)
@@ -702,11 +775,11 @@ export function concatSeasonalData(seasonalData, nbRepeats){
 }
 
 /**
- * Calculates the residual data.
+ * Calculates the absolute value residual data.
  * @param {Array} originalData Array containing original data.
  * @param {Array} averagedData Array containing rolling averages.
  * @param {Array} seasonalData Array containing the seasonal data.
- * @returns Array containing the residual data.
+ * @returns Array containing the absolute value residual data.
  */
 export function calcResidualsData(originalData,
                                   averagedData,
@@ -715,7 +788,7 @@ export function calcResidualsData(originalData,
         originalData.map(
             (value, index) => {
                 return(
-                    value - averagedData[index] - seasonalData[index]
+                    Math.abs(value - averagedData[index] - seasonalData[index])
                 )
             }
         )

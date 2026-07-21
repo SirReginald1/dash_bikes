@@ -185,7 +185,7 @@ export default function CharacteristicsPage({uniqueYears,
                 out.push({
                     x: monthList,
                     y: monthCount,
-                    type: 'scattergl',
+                    type: 'scatter',
                     //stackgroup: 'one',
                     //fill: 'toself',
                     marker: {

@@ -3,12 +3,15 @@ import { useTheme } from "@mui/material/styles"
 import { colors } from '@mui/material'
 import { FormControl, Select, MenuItem } from "@mui/material"
 import Plot from 'react-plotly.js'
+import Plotly from 'react-plotly.js'
 import { getIndexContinuBracketSet, getIndexesSet, concatIdxMap, extractValues, getIndexes } from '../utils.js'
 import FilterSelection from '../components/FilterSelection.jsx'
 import "./MapScatterPage.css"
 
+Plotly.an
 
-export default function MapScatterPage({uniqueYearsTemp,
+export default function MapScatterPage({filterBarIsOpen,
+                                        uniqueYearsTemp,
                                         accidentData,
                                         variableKeyMap,
                                         uniqueVariablesTemp,
@@ -286,12 +289,12 @@ export default function MapScatterPage({uniqueYearsTemp,
         window.addEventListener('resize', handleResize);
         requestAnimationFrame(() => {Plotly.Plots.resize(plotRef.current)});
         return () => {window.removeEventListener('resize', handleResize)};
-    }, [])
+    }, [filterBarIsOpen])
 
     // Update traces when filters change
     useEffect(() => {
         Plotly.react(plotRef.current, traces, layout)
-    }, [traces, colorVarSelected])
+    }, [traces, colorVarSelected, filterBarIsOpen])
     
     // TODO: Try to clean up logic for this function 
     /**

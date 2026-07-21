@@ -1,9 +1,16 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { ThemeProvider,
          CssBaseline,
          GlobalStyles } from '@mui/material';
 import { lightTheme, darkTheme } from './themes.jsx'
-import { getIndexes, depToRegCodeMap, depsInRegCodeMap } from './utils.js'
+import { getIndexes,
+         concatIdxMap,
+         depToRegCodeMap,
+         depsInRegCodeMap,
+         getIndexContinuBracketSet,
+         getIndexesSet,
+         filterByValuesSet,
+         extractIdxFromFilterMap } from './utils.js'
 import Navbar from './components/NavigationBar.jsx'
 import Sidebar from './components/SideBarMenu.jsx'
 import MainPage from './components/MainPage.jsx';
@@ -60,9 +67,29 @@ function App() {
   const sidebarMenuSectionItems = [["Evolution temporelle",
                                     "Caratéristiques des accidents"],
                                    ["Localisation des accidents",
-                                    "Accidents par région/département"]
-                                  ]
-                                
+                                    "Accidents par région/département"]]
+  
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  const [filterMap, setFilterMap] = useState(new Map());
+
+  //const filterMap = useRef(new Map());
+
+  //const [filterMapChangeFlag, setFilterMapChangeFlag] = useState(false);
+
+  const [filterBarIsOpen, setFilterBarIsOpen] = useState(0);
+
+  // TODO: Find more efficient way to plug filter map into graphs
+  const idxFilterMap = useMemo(() => {
+    return(extractIdxFromFilterMap(accidentData, filterMap/*.current*/))
+  }, [filterMap]);
+
+  const idxFilterSet = useMemo(() => {
+    return(concatIdxMap(idxFilterMap))
+  }, [idxFilterMap])
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   const [uniqueYears, setUniqueYears] = useState([]);
 
   const [dataZoneIndexes, setDataZoneIndexes] = useState(new Map([
@@ -92,7 +119,6 @@ function App() {
     Promise.all([
       fetch("http://localhost:8000/dash_bikes/data").then(res => res.json()),//.then(setAccidentData)
       fetch("http://localhost:8000/dash_bikes/metadata").then(res => res.json())
-      //fetch("http://localhost:8000/dash_bikes/reg_map").then(res => res.json())//.then(setRegMapGeojson)
 
     ])
     .then(([accidentData, metadata]) => {
@@ -178,6 +204,114 @@ function App() {
     //console.log(accidentData.toString())
   }, [])
 
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Map only updates when using continuous variables !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // TODO: Find a way to not copy map at each update (make useRef work again)
+    /**
+     * Function that is passed to each selector element to set that map
+     * of selected indexes.
+     * @param {String} variable The variable label as it appears in the data
+     *  object.
+     * @param {Array[String | Number]} values Array containing all the selected
+     *  values.
+     * @param {Number} includeValues A value to include in every selection.
+     *  Used to include "null" values. Default is undefined.
+     */
+    function setFilterMapWrapper(variable, values, includeValues = undefined){
+        // Var is categorical
+        console.log("Map set!")
+        if(Object.hasOwn(metadata['accidentVelo'][variable], 'keys')){
+            let valueSet = new Set()
+            for(const paire of values){
+                // Try to clean up this logic
+                if(values instanceof Array){
+                    // Allow this to work for strings
+                    if(Number.isNaN(Number(paire[0]))){
+                        valueSet.add(paire[0])    
+                    }
+                    else{
+                        valueSet.add(Number(paire[0]))
+                    }
+                }
+                else{
+                    valueSet.add(paire)
+                }
+            }
+            if(valueSet.size > 0){
+              /*
+                filterMap.current.set(
+                    variable,
+                    getIndexesSet(accidentData[variable], valueSet)
+                )
+              */
+
+             filterMap.set(
+               variable,
+               getIndexesSet(accidentData[variable], valueSet)
+              )
+              //console.log(`keys: ${[...filterMap.keys()]}`)
+              //console.log(`keys: ${[...filterMap.keys()]}`)
+              setFilterMap(new Map(filterMap));
+            }
+            else{ // If none or all are selected
+                //filterMap.current.delete(variable)
+                filterMap.delete(variable)
+                setFilterMap(new Map(filterMap));
+            }
+        }
+        else{
+            // If variable set to all
+            if(values === 'all'){
+                /*filterMap.current.delete(variable)*/
+                filterMap.delete(variable)
+                setFilterMap(new Map(filterMap));
+            }
+            else{
+                /*
+                filterMap.current.set(
+                    variable,
+                    getIndexContinuBracketSet(
+                        accidentData[variable],
+                        values,
+                        includeValues
+                        //variableKeyMap[variable]["null_replace_val"]
+                    )
+                )
+                */
+               filterMap.set(
+                    variable,
+                    getIndexContinuBracketSet(
+                        accidentData[variable],
+                        values,
+                        includeValues
+                        //variableKeyMap[variable]["null_replace_val"]
+                    )
+                )
+              console.log(`keys: ${[...filterMap.keys()]}`)
+              setFilterMap(new Map(filterMap));
+            }
+        }
+        //setFilterMapFunction(filterMap)
+        //console.log(`map size: ${filterMap/*.current*/.size}`)
+        //console.log(`map set to: ${[...filterMap/*.current*/.entries()]}`)
+        //for(const [k, v] of filterMap.current.entries()){
+        //    console.log(`key: ${k}`)
+        //    console.log(`set: ${[...v]}`)
+        //}
+        //let flag = filterMapChangeFlag === false ? true : false
+        //setFilterMapChangeFlag(true)
+        //console.log(`Flag change initial. val: ${filterMapChangeFlag}`)
+        //console.log(`bool val: ${flag === false}, result: ${flag === false ? true : false}`)
+        //setFilterMapChangeFlag(filterMapChangeFlag === 0 ? 1 : 0)
+        //setFilterMapChangeFlag(f => f + 1);
+        //console.log(`flag: ${filterMapChangeFlag}`)
+        //setFilterMapChangeFlag(false)
+        //console.log(`Flag change after switch. val: ${filterMapChangeFlag}`)
+    }
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
   //useEffect(() => {
   //  setUniqueYears([... new Set(accidentData.an)].sort())
   //}, [accidentData])
@@ -201,6 +335,8 @@ function App() {
             <Navbar
               sideBarButtonAction={setSideBarOpen}
               sideBarOpenVar={sideBarOpen}
+              filterBarButtonAction={setFilterBarIsOpen}
+              filterOpenVar={filterBarIsOpen}
               dropdownLabels={initialNavDropSelectedVals}
               dropdownValues={navDropSelectedVals}
               setDropdownVals={setNavDropSelectedVals}
@@ -219,10 +355,17 @@ function App() {
             />
           </div>
             <MainPage
+              filterBarIsOpen={filterBarIsOpen}
               selectedPage={mainPage}
               uniqueYears={uniqueYears}
               accidentData={accidentData}
               metadata={metadata['accidentVelo']}
+              filterMap={filterMap}
+              idxFilterMap={idxFilterMap}
+              idxFilterSet={idxFilterSet}
+              //filterMapChangeFlag={filterMapChangeFlag}
+              //setFilterMapChangeFlag={setFilterMapChangeFlag}
+              setFilterMap={setFilterMapWrapper}
               geojsonData={geojsonData}
               zoneIndexMap={dataZoneIndexes}
               zoneComputedData={zoneComputedData}
