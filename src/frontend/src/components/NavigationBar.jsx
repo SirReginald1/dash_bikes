@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Switch, IconButton } from '@mui/material';
+import { Switch, IconButton, Button } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import NavbarDropdownSpan from "./NavbarDropdownSpan.jsx"
 import "./NavigationBar.css"
@@ -22,6 +22,8 @@ import bike_accident_img from "../../public/accident_bike.png"
  */
 export default function Navbar({sideBarButtonAction,
                                 sideBarOpenVar,
+                                filterBarButtonAction,
+                                filterOpenVar,
                                 dropdownValues,
                                 dropdownLabels,
                                 setDropdownVals,
@@ -30,6 +32,14 @@ export default function Navbar({sideBarButtonAction,
 
   function toggleSideBarOpen() {
     sideBarButtonAction(!sideBarOpenVar)
+  }
+
+  //const [testBool, setTestBool] = useState(false);
+  
+
+
+  function toggleFilterOpen() {
+    filterBarButtonAction(!filterOpenVar)
   }
 
   return(
@@ -47,11 +57,19 @@ export default function Navbar({sideBarButtonAction,
         >
           <MenuIcon fontSize="inherit"/>
         </IconButton>
-        <NavbarDropdownSpan
-          dropdownItemLabels={dropdownLabels}
-          dropdownSelectedVals={dropdownValues}
-          setSelectedVals={setDropdownVals}
-        />
+        <Button
+          onClick={toggleFilterOpen}
+          variant={filterOpenVar ? "contained" : "outlined"}
+        >
+          Filter
+        </Button>
+        {
+        //<NavbarDropdownSpan
+        //  dropdownItemLabels={dropdownLabels}
+        //  dropdownSelectedVals={dropdownValues}
+        //  setSelectedVals={setDropdownVals}
+        ///>
+        }
       </span >
       <span className="mainNavBarSpanRight">
         <Switch

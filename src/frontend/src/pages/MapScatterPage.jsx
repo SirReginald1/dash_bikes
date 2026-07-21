@@ -1,17 +1,22 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { useTheme } from "@mui/material/styles"
-import { colors } from '@mui/material'
-import { FormControl, Select, MenuItem } from "@mui/material"
+//import { colors } from '@mui/material'
+//import { FormControl, Select, MenuItem } from "@mui/material"
 import Plot from 'react-plotly.js'
 import { getIndexContinuBracketSet, getIndexesSet, concatIdxMap, extractValues, getIndexes } from '../utils.js'
-import FilterSelection from '../components/FilterSelection.jsx'
+//import FilterSelection from '../components/FilterSelection.jsx'
 import "./MapScatterPage.css"
 
+//Plotly.an
 
-export default function MapScatterPage({uniqueYearsTemp,
+export default function MapScatterPage({filterBarIsOpen,
+                                        uniqueYearsTemp,
                                         accidentData,
                                         variableKeyMap,
                                         uniqueVariablesTemp,
+                                        colorVarSelected,
+                                        idxFilterSet,
+                                        idxFilterMap,
                                         themeMode}){
 
     // DEBUG
@@ -49,16 +54,52 @@ export default function MapScatterPage({uniqueYearsTemp,
     //
     const theme = useTheme();
     
-    const [filterMapChangeFlag, setFilterMapChangeFlag] = useState(0);
+    //const [filterMapChangeFlag, setFilterMapChangeFlag] = useState(0);
     
-    const [colorVarSelected, setColorVarSelected] = useState('None');
+    //const [colorVarSelected, setColorVarSelected] = useState('None');
 
     const filterMap = useRef(new Map());
 
     const plotRef = useRef(null);
-
+    /*
     const varsExcludedFromSelection = ['date', 'hrmn', 'dep', 'lat', 'lon']
 
+    const colorSelectionComp = 
+        <div id='rootDropdownDiv'>
+                    <h4 id='colorSelectTitle'>
+                        Variable color selection
+                    </h4>
+                    <FormControl id='colorVarSelectFormControl'>
+                        <Select
+                            id='colorVarSelect'
+                            value={colorVarSelected}
+                            onChange={(event) => setColorVarSelected(event.target.value)}
+                        >
+                            {[
+                                <MenuItem
+                                    className="navbarMenuItem"
+                                    key='None'
+                                    value='None'
+                                >
+                                    None
+                                </MenuItem>
+                            ].concat(Object.keys(variableKeyMap).map((key, idx) => {
+                                if(!varsExcludedFromSelection.includes(key)){
+                                    return(
+                                        <MenuItem
+                                            className="navbarMenuItem"
+                                            key={key}
+                                            value={key}
+                                        >
+                                            {variableKeyMap[key]['full_label']}
+                                        </MenuItem>
+                                    )
+                                }
+                            }))}
+                        </Select>
+                    </FormControl>
+                </div>
+    */
     let mapTextArray = []
     for(let i=0;i<accidentData.lat.length;i++){
         // TODO: Make string building a loop
@@ -138,9 +179,9 @@ export default function MapScatterPage({uniqueYearsTemp,
         let longitudes = []
         let texts = []
         if(colorVarSelected === 'None'){
-            if(filterMap.current.size > 0){
-                let indexesSet = concatIdxMap(filterMap.current)
-                for(const index of indexesSet){
+            if(/*filterMap.current.size*/idxFilterMap.size > 0){
+                //let indexesSet = concatIdxMap(filterMap.current)
+                for(const index of idxFilterSet/*indexesSet*/){
                     latitudes.push(accidentData['lat'][index])
                     longitudes.push(accidentData['lon'][index])
                     texts.push(mapTextArray[index])
@@ -183,7 +224,7 @@ export default function MapScatterPage({uniqueYearsTemp,
                     let indexesSet = getIndexes(
                         accidentData[colorVarSelected],
                         Number(key),
-                        concatIdxMap(filterMap.current)
+                        concatIdxMap(/*filterMap.current*/idxFilterMap)
                     )
                     //console.log(`index set: ${indexesSet}, value: ${Number(key)}`)
                     for(const index of indexesSet){
@@ -269,7 +310,7 @@ export default function MapScatterPage({uniqueYearsTemp,
             }
             return out;
         }
-    }, [filterMapChangeFlag, colorVarSelected]);
+    }, [/*filterMapChangeFlag, */colorVarSelected, idxFilterSet]);
 
    // Initial render
     useEffect(() => {
@@ -286,12 +327,12 @@ export default function MapScatterPage({uniqueYearsTemp,
         window.addEventListener('resize', handleResize);
         requestAnimationFrame(() => {Plotly.Plots.resize(plotRef.current)});
         return () => {window.removeEventListener('resize', handleResize)};
-    }, [])
+    }, [filterBarIsOpen])
 
     // Update traces when filters change
     useEffect(() => {
         Plotly.react(plotRef.current, traces, layout)
-    }, [traces, colorVarSelected])
+    }, [traces, colorVarSelected, filterBarIsOpen])
     
     // TODO: Try to clean up logic for this function 
     /**
@@ -303,7 +344,7 @@ export default function MapScatterPage({uniqueYearsTemp,
      *  values.
      * @param {Number} includeValues A value to include in every selection.
      *  Used to include "null" values. Default is undefined.
-     */
+     *//*
     function setFilterMap(variable, values, includeValues = undefined){
         // Var is categorical
         if(Object.hasOwn(variableKeyMap[variable], 'keys')){
@@ -362,9 +403,10 @@ export default function MapScatterPage({uniqueYearsTemp,
         //console.log(`Flag change after switch. val: ${filterMapChangeFlag}`)
 
     }
-    
+    */
     return(
         <div id='rootDiv'>
+            {/*
             <span id='contentSpan'>
                 <div id='rootDropdownDiv'>
                     <h4 id='colorSelectTitle'>
@@ -410,10 +452,13 @@ export default function MapScatterPage({uniqueYearsTemp,
                         excludedVars={varsExcludedFromSelection}
                     />
                 </div>
+                */
+                }
                 <div id='mapDiv'>
                     <div ref={plotRef} id='map'/>
                 </div>
-            </span>
+            {//</div></span>
+            }
         </div>
     )
 }

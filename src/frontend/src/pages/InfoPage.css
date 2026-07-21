@@ -1,0 +1,10 @@
+#devContactList {
+    display: flex !important;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+#mainContent {
+    justify-content: left;
+    /*align-items: start;*/
+}

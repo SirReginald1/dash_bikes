@@ -12,7 +12,8 @@ import "./CatFilterSelector.css"
 export default function CatFilterSelector({variable,
                                            dropdownLabel,
                                            options,
-                                           selectionFunction}){
+                                           selectionFunction,
+                                           callbackFunction = undefined}){
 
     //function buildMenuItems(variableKeyMap, selectionFunction){
     //    let out = []
@@ -37,7 +38,12 @@ export default function CatFilterSelector({variable,
             clearOnEscape
             id={`autocomp-${variable}`}
             //label={variableKeyMap["description"]}
-            onChange={(event, value) => selectionFunction(variable, value)}
+            onChange={(event, value) => {
+                selectionFunction(variable, value)
+                if(callbackFunction !== undefined){
+                    callbackFunction(variable, value)
+                }
+            }}
             options={options}
             getOptionLabel={(option => option[1])}
             //filterSelectedOptions

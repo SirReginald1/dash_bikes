@@ -34,6 +34,8 @@ import "./CharacteristicsPage.css"
 export default function CharacteristicsPage({uniqueYears,
                                              accidentData,
                                              variableKeyMap,
+                                             filterMap,
+                                             idxFilterSet,
                                              uniqueVariablesTemp,}){
     
     const theme = useTheme();
@@ -113,6 +115,15 @@ export default function CharacteristicsPage({uniqueYears,
         [selectedYears, accidentData]
     );
 
+    /*useEffect(() => {
+        console.log("filterMap")
+        for(let [k, v] of filterMap.entries()){
+            console.log(`key: ${k}, val: ${v.size}`)
+        }
+        console.log("idxFilterSet")
+        console.log(idxFilterSet.size)
+    }, [filterMap, idxFilterSet])*/
+
     //const [selectedYearIndexes]
 
     //const [selectedVariable, setSelectedVariable] = useState("grav");
@@ -149,26 +160,63 @@ export default function CharacteristicsPage({uniqueYears,
         new Array()
     );
 
-    const [selectedVar1UniqueValues, setSelectedVar1UniqueValues] = useState(
+    /*const [selectedVar1UniqueValues, setSelectedVar1UniqueValues] = useState(
         new Array()
-    );
+    );*/
     
+    ////////////////////////////////////////////////////////////////////////////////////////
     useEffect(() => {
         setSelectedVar1ValLabels([...selectedVar1IndexMap2.keys()])
         let valueCounts = new Array()
-        for(const set of selectedVar1IndexMap2.values()){
-            valueCounts.push(set.size)
+        if(filterMap.size === 0 & idxFilterSet.size === 0){
+            for(const set of selectedVar1IndexMap2.values()){
+                valueCounts.push(set.size)
+            }
+        }
+        else if(filterMap.size > 0 & idxFilterSet.size === 0){
+            for(const set of selectedVar1IndexMap2.values()){
+                valueCounts.push(0)
+            }
+        }
+        else{
+            for(const set of selectedVar1IndexMap2.values()){
+                valueCounts.push(set.intersection(idxFilterSet).size)
+            }
         }
         setSelectedVar1ValCounts(valueCounts)
-    }, [selectedYearsIndexSet, selectedVariable1]);
+    }, [selectedYearsIndexSet, selectedVariable1, idxFilterSet]);
+    ////////////////////////////////////////////////////////////////////////////////////////
 
 
     const stackedPlotTraces = useMemo(() => {
         //console.log("Entered: stackedPlotTraces useMemo!")
             let out = []
-            let filterMap = new Map()
+            
+            // TODO: Change this so that comparisons aren't done at each
+            // iteration of the loop.
+            /**
+             * Function used to combine filter bar sets with other filter
+             * sets.
+             * @param {*} otherFilterSet The set produced by an other filter.
+             * @param {*} filterMap The filter bar filter map.
+             * @param {*} idxFilterSet The set of valid indexes produced by the
+             * filter bar.
+             * @returns The set combined set of filters from both sets.
+             */
+            function getFilterSet(otherFilterSet, filterMap, idxFilterSet){
+                if(filterMap.size === 0 & idxFilterSet.size === 0)
+                    return(otherFilterSet)
+                else if(filterMap.size > 0 & idxFilterSet.size === 0)
+                    return(idxFilterSet)
+                else
+                    return(otherFilterSet.intersection(idxFilterSet))
+            }
+
+            //let filterMap = new Map()
             let yearHoverLabel = selectedYears[0] === selectedYears[1] ? selectedYears[1] : 
                 `${selectedYears[0]}, ${selectedYears[1]}`
+            // Used to iterate only through pre-computed sets of indexes
+            // for each step (reduce nb of comparisons)
             let variableKeyValues = [...selectedVar1IndexMap2.keys()]
             //console.log(`variableKeyValues: ${variableKeyValues}`)
             for(let i=0;i<selectedVar1IndexMap2.size;i++){
@@ -177,7 +225,11 @@ export default function CharacteristicsPage({uniqueYears,
                     monthCount[monthIdx] = getIndexes(
                         accidentData['mois'],
                         monthList[monthIdx],
-                        selectedVar1IndexMap2.get(variableKeyValues[i])
+                        getFilterSet(
+                            selectedVar1IndexMap2.get(variableKeyValues[i]),
+                            filterMap,
+                            idxFilterSet
+                        )
                     ).length
                 }
                 //console.log(`month count: ${monthCount}`)
@@ -185,7 +237,7 @@ export default function CharacteristicsPage({uniqueYears,
                 out.push({
                     x: monthList,
                     y: monthCount,
-                    type: 'scattergl',
+                    type: 'scatter',
                     //stackgroup: 'one',
                     //fill: 'toself',
                     marker: {
@@ -199,7 +251,7 @@ export default function CharacteristicsPage({uniqueYears,
             }
             //console.log(`stacked data: ${JSON.stringify(out)}`)
             return(out)
-        }, [selectedYears, selectedVariable1]);
+        }, [selectedYears, selectedVariable1, idxFilterSet]);
 
     const stackedPlotLayout = useMemo(() => {
         return(
@@ -254,7 +306,7 @@ export default function CharacteristicsPage({uniqueYears,
                 }
             }
         )
-    }, [selectedVariable1, selectedYears])
+    }, [selectedVariable1, selectedYears, idxFilterSet])
 
     const barPlotTraces = useMemo(() => {
             return([
@@ -304,10 +356,19 @@ export default function CharacteristicsPage({uniqueYears,
     const pieChartTraces = useMemo(() => {
             // TODO: Cache or precalc cat groups to save calculating it every time
             // TODO: Account for pies with no data
-            let selectedYearSubsetIdx = getIndexesSet(
-                accidentData["an"],
-                selectedYearsSet
-            )
+            let selectedYearSubsetIdx
+            if(filterMap.size === 0 & idxFilterSet.size === 0)
+                selectedYearSubsetIdx = getIndexesSet(
+                    accidentData["an"],
+                    selectedYearsSet
+                )
+            else if(filterMap.size > 0 & idxFilterSet.size === 0)
+                selectedYearSubsetIdx = idxFilterSet
+            else
+                selectedYearSubsetIdx = getIndexesSet(
+                    accidentData["an"],
+                    selectedYearsSet
+                ).intersection(idxFilterSet)
             let out = []
             let var1Indexes = getIndexesCategoricalSet(
                 accidentData,
@@ -371,7 +432,7 @@ export default function CharacteristicsPage({uniqueYears,
                 })
             }
             return(out)
-        }, [accidentData, variableKeyMap, selectedVariable1, selectedVariable2, selectedVar1ValLabels, selectedVar1ValCounts])
+        }, [accidentData, variableKeyMap, selectedVariable1, selectedVariable2, selectedVar1ValLabels, selectedVar1ValCounts, idxFilterSet])
 
     function distributeValues(a, b, n) {
       const interval = (b - a) / (n + 1);
@@ -528,7 +589,7 @@ export default function CharacteristicsPage({uniqueYears,
                 annotations: annotations,
                 grid: {rows: nbRows, columns: nbCols}
         })
-    }, [variableKeyMap, selectedVariable1, selectedVariable2])
+    }, [variableKeyMap, selectedVariable1, selectedVariable2, idxFilterSet])
 
     return(
             <div id="temporalPageRootDiv">

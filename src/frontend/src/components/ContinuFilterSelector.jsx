@@ -26,6 +26,7 @@ export default function ContinuFilterSelector({dataArray,
                                                nullReplaceValue = undefined,
                                                setMin = undefined,
                                                setMax = undefined,
+                                               callbackFunction = undefined
                                                }){
 
     const minValue = setMin === undefined ? Math.min(...dataArray) : setMin
@@ -50,6 +51,9 @@ export default function ContinuFilterSelector({dataArray,
                         }
                         else{
                             selectionFunction(variable, value, nullReplaceValue)
+                        }
+                        if(callbackFunction !== undefined){
+                            callbackFunction(variable, value)
                         }
                     }
                 }

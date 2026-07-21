@@ -22,6 +22,10 @@ export default function MapRegionPage({uniqueYears,
                                        geojsonData,
                                        zoneIndexMap,
                                        zoneComputedData,
+                                       idxFilterSet,
+                                       idxFilterMap,
+                                       unitVarSelected,
+                                       regMapSelected,
                                        loadingGeoJsonData,
                                        themeMode}){
 
@@ -64,17 +68,17 @@ export default function MapRegionPage({uniqueYears,
 
     const [filterMapChangeFlag, setFilterMapChangeFlag] = useState(0);
     
-    const [colorVarSelected, setColorVarSelected] = useState('perAcc');
+    //const [colorVarSelected, setColorVarSelected] = useState('perAcc');
 
-    const [colorModalitySelected, setColorModalitySelected] = useState('None');
+    //const [colorModalitySelected, setColorModalitySelected] = useState('None'); // TODO: Add color type selection
 
-    const [selectedZones, setSelectedZones] = useState("reg");
+    //const [selectedZones, setSelectedZones] = useState("reg");
 
-    const [nbAccTot, setNbAccTot] = useState(0);
+    //const [nbAccTot, setNbAccTot] = useState(0);
 
-    const [nbAccPer, setNbAccPer] = useState(0);
+    //const [nbAccPer, setNbAccPer] = useState(0);
 
-    const filterMap = useRef(new Map());
+    //const filterMap = useRef(new Map());
 
     const plotRef = useRef(null);
 
@@ -84,38 +88,68 @@ export default function MapRegionPage({uniqueYears,
             let colVals = []
             let lebelVals = []
             let geojsonKeys = []
-            // Find the value that the least keys to use as iterator
+            // Find the value that the least keys to use as iterator in case of mismatch between
+            // data and geojson
             let zoneIterator
-            if (zoneIndexMap.get(selectedZones).size < zoneComputedData.get(selectedZones)){
-                zoneIterator = zoneIndexMap.get(selectedZones).keys()
+            //console.log(`selected zone: ${selectedZones}`)
+            //console.log(`selected zone dict size: ${zoneIndexMap.get(selectedZones).size}`)
+            if (zoneIndexMap.get(regMapSelected).size < zoneComputedData.get(regMapSelected)){
+                zoneIterator = zoneIndexMap.get(regMapSelected).keys()
             }
             else{
-                zoneIterator = zoneComputedData.get(selectedZones).keys()
+                zoneIterator = zoneComputedData.get(regMapSelected).keys()
             }
             for(let zone of zoneIterator){
                 // Only add data if pressent in both datasets
-                let zoneFromBaseData = zoneIndexMap.get(selectedZones).get(zone)
-                let zoneFromGeojson = zoneComputedData.get(selectedZones).get(zone)
+                let zoneFromBaseData = zoneIndexMap.get(regMapSelected).get(zone)
+                let zoneFromGeojson = zoneComputedData.get(regMapSelected).get(zone)
+                //console.log(`zoneFromBaseData: ${zoneFromBaseData}`)
+                //console.log(`zoneFromGeojson: ${zoneFromGeojson}`)
+                // Only if zone exists in both datasets
                 if(zoneFromBaseData !== undefined && zoneFromGeojson !== undefined){
                     // Add computed values to map arrays
                     let computedVal
-                    console.log(`zone: ${zone}`)
-                    console.log(`indexes: ${zoneFromBaseData}`)
-                    console.log(`filter map keys: ${[...filterMap.current.keys()]}`)
+                    //console.log(`zone: ${zone}`)
+                    //console.log(`indexes: ${zoneFromBaseData}`)
+                    //console.log(`filter map keys: ${[...filterMap.current.keys()]}`)
                     //let filteredIndexes = zoneFromBaseData
-                    let filteredIndexes = filterByValues(
-                        accidentData,
-                        filterMap.current,
-                        zoneFromBaseData
-                    )
-                    console.log(`filteredIndexes: ${filteredIndexes}`)
-                    if(colorVarSelected === 'perAcc'){
-                        computedVal = (filteredIndexes.length / 
+                    // Mixing all filter sets
+                    //let mixedFilterSet
+                    //if(idxFilterMap.size === 0 & idxFilterSet.size === 0){
+                    //    console.log(`None selected`)
+                    //    mixedFilterSet = zoneFromBaseData
+                    //}
+                    //// If filter bar set is empty and elements are selected
+                    //// then there are no accidents for that selection
+                    //else if(idxFilterMap.size > 0 & idxFilterSet.size === 0){
+                    //    console.log(`None selected`)
+                    //    mixedFilterSet = idxFilterSet
+                    //}
+                    //else  // TODO: Make zoneFromBaseData a set so to avoid set  creation at each step
+                    //    //mixedFilterSet = new Set(zoneFromBaseData).intersection(idxFilterSet)
+                    //    mixedFilterSet = idxFilterSet
+                    //let filteredIndexes = filterByValues(
+                    //    accidentData,
+                    //    filterMap.current,
+                    //    mixedFilterSet
+                    //)
+                    let filteredIndexes
+                    if(idxFilterMap.size === 0 & idxFilterSet.size === 0)
+                        filteredIndexes = new Set(zoneFromBaseData)
+                    else if(idxFilterMap.size > 0 & idxFilterSet.size === 0)
+                        filteredIndexes = idxFilterSet
+                    else
+                        filteredIndexes = new Set(zoneFromBaseData).intersection(idxFilterSet)
+                    //let filteredIndexes = new Set(zoneFromBaseData).intersection(idxFilterSet)
+                    //console.log(`mixedFilterSet: ${mixedFilterSet.size}`)
+                    if(unitVarSelected === 'perAcc'){
+                        console.log(`divider: ${(zoneFromGeojson.get("pop") / 10000)}`)
+                        computedVal = (filteredIndexes.size / 
                             (zoneFromGeojson.get("pop") / 10000))
                         lebelVals.push(computedVal.toFixed(3))
                     }
                     else{
-                        computedVal = filteredIndexes.length
+                        computedVal = filteredIndexes.size
                         lebelVals.push(computedVal)
                     }
                     geojsonKeys.push(zone)
@@ -125,7 +159,7 @@ export default function MapRegionPage({uniqueYears,
             // Build hover message
             let hoverMessage
             let unitLabel
-            let specialUnitLabel = colorValLabel.get(colorVarSelected)
+            let specialUnitLabel = colorValLabel.get(unitVarSelected)
             if(specialUnitLabel === undefined){
                 unitLabel = "Nb accidents"
             }
@@ -133,16 +167,18 @@ export default function MapRegionPage({uniqueYears,
                 unitLabel = specialUnitLabel
             }
             // Select color variable
-            if(colorVarSelected === 'perAcc'){
+            if(unitVarSelected === 'perAcc'){
                 hoverMessage = "<b>%{properties.nom}</b><br>" +
                                "Population: %{properties.pop}<br>" +
                                `${unitLabel}: %{customdata}<extra></extra>`
             }
-
+            console.log(`colVals: ${colVals}`)
+            console.log(`geojsonKeys: ${geojsonKeys}`)
+            //console.log(`colVals len: ${colVals.length}`)
             return(
                 [{
                     type: "choroplethmap",
-                    geojson: geojsonData.get(selectedZones),
+                    geojson: geojsonData.get(regMapSelected),
                     locations: geojsonKeys, // The keys used to match zone to z value
                     z: colVals,
                     featureidkey: "properties.code",
@@ -165,11 +201,11 @@ export default function MapRegionPage({uniqueYears,
                 ]
             )
         },
-        [filterMapChangeFlag, colorVarSelected]
+        [filterMapChangeFlag, unitVarSelected, regMapSelected, idxFilterSet]
     );
 
 
-
+    /*
     const layout = useRef({
         map: {
             style: "dark",
@@ -179,8 +215,33 @@ export default function MapRegionPage({uniqueYears,
         //width: 600,
         //height: 400,
         margin: {t: 0, b: 0, r:0, l:0}
-    },
-);
+    },);
+    */
+    /*
+    const layout = useMemo(() => {
+        return({
+            map: {
+                style: "dark",
+                center: {lon: 2.5, lat: 46.5},
+                zoom: 5.5
+            },
+            //width: 600,
+            //height: 400,
+            margin: {t: 0, b: 0, r:0, l:0}
+        })
+    }, [idxFilterSet]);
+    */
+
+    const layout = {
+        map: {
+            style: "dark",
+            center: {lon: 2.5, lat: 46.5},
+            zoom: 5.5
+        },
+        //width: 600,
+        //height: 400,
+        margin: {t: 0, b: 0, r:0, l:0}
+    }
 
 
    // Initial render
@@ -191,7 +252,7 @@ export default function MapRegionPage({uniqueYears,
             plotRef.current,
             traces,
             //data,
-            layout.current,
+            layout,
             {responsive: true}
         );
         // Resize with window
@@ -205,10 +266,12 @@ export default function MapRegionPage({uniqueYears,
 
     // Update traces when filters change
     useEffect(() => {
+        //console.log(`traces len: ${traces.length}`)
+        //console.log(`layout len: ${layout.length}`)
         Plotly.react(
             plotRef.current,
             traces,
-            layout.current
+            layout
         )
     }, [traces/*, colorVarSelected*/])
     
@@ -219,7 +282,7 @@ export default function MapRegionPage({uniqueYears,
      *  object.
      * @param {Array[String | Number]} values Array containing all the selected
      *  values.
-     */
+     *//*
     function setFilterMap(variable, values){
         if(Object.hasOwn(variableMetadata[variable], 'keys')){
             let valueSet = new Set()
@@ -264,10 +327,11 @@ export default function MapRegionPage({uniqueYears,
         setFilterMapChangeFlag(filterMapChangeFlag == 0 ? 1 : 0)
         //console.log(`Flag change after switch. val: ${filterMapChangeFlag}`)
 
-    }
+    }*/
     
     return(
         <div id='rootDiv'>
+            {/*
             <span id='contentSpan'>
                 <div id='rootDropdownDiv'>
                     <h4 id='colorSelectTitle'>
@@ -307,10 +371,13 @@ export default function MapRegionPage({uniqueYears,
                         setFilterMapFunction={setFilterMap}
                     />
                 </div>
+                */}
                 <div id='mapDiv'>
                     <div ref={plotRef} id='map'/>
                 </div>
-            </span>
+            {
+            //</span>
+            }
         </div>
     )
 }

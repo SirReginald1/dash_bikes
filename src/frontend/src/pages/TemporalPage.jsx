@@ -9,12 +9,19 @@ import { getIndexes,
          rollingAverage,
          calculateSeasonalData,
          concatSeasonalData,
-         calcResidualsData } from "../utils"
+         calcResidualsData,
+         concatIdxMapSet, 
+         getIndexesSet} from "../utils"
 import "./TemporalPage.css"
 
 // TODO: Add theme variable to useMemo triggers
 export default function TemporalPage({uniqueYears,
-                                      accidentData,}){
+                                      accidentData,
+                                      //filterMapChangeFlag,
+                                      filterMap,
+                                      idxFilterSet,
+                                      idxFilterMap,
+                                      selectedYears}){
     
     const theme = useTheme();
     
@@ -30,43 +37,70 @@ export default function TemporalPage({uniqueYears,
     //console.log(`unque years [0]: ${uniqueYears[0]}`)
     //console.log(`unque years is str: ${uniqueYears[0] instanceof String}`)
     */
-    // Maybe use useState here
-    const [selectedYear, setSelectedYear] = useState(
-            Math.max(...uniqueYears)
-    
+    // Move this to app level
+    /*
+    const selectedYears = useMemo(() => {
+        return(
+            [Math.min(...uniqueYears), Math.max(...uniqueYears)]
+        )
+    }, [uniqueYears]);
+    */
+    /*
+    useEffect(() => {
+        console.log('Map keys:')
+        for(let [k, v] of filterMap.entries()){
+            for(let val of v.keys()){
+                console.log(`key: ${k}, vel: ${val}`)
+            }
+
+        }
+    }, [idxFilterSet])
+    */
+
+    //const selectedYearIndexes = useMemo(() => {
+    //        return(getIndexes(accidentData.an, selectedYear))
+    //    },
+    //    [selectedYear]
+    //);
+
+    const nbAccidentsSelectedYears = useMemo(() => {
+            return(
+                idxFilterSet.size === 0 ? accidentData["an"].length : idxFilterSet.size
+            )
+        },
+        [accidentData, idxFilterSet]
     );
 
-    const selectedYearIndexes = useMemo(() => {
-            return(getIndexes(accidentData.an, selectedYear))
+    //const validGravValues = useMemo(() => {
+    //        return(selectedYearIndexes.map(x=>accidentData.grav[x]))
+    //    },
+    //    [selectedYears]
+    //);
+
+    const nbHospitalizedSelectedYears = useMemo(() => {
+            return(
+                getIndexesSet(
+                    accidentData["grav"],
+                    3,
+                    idxFilterSet.size === 0 ? undefined : idxFilterSet
+                ).size
+            )
+            //return(getIndexes(
+            //    validGravValues,
+            //    3
+            //).map(x=>accidentData.grav[x]).length)
         },
-        [selectedYear]
+        [accidentData, idxFilterSet]
     );
 
-    const nbAccidentsSelectedYear = useMemo(() => {
-            return(selectedYearIndexes.length)
+    const nbDeathsSelectedYears = useMemo(() => {
+            return(getIndexesSet(
+                accidentData["grav"],
+                2,
+                idxFilterSet.size === 0 ? undefined : idxFilterSet
+            ).size)
         },
-        [selectedYearIndexes]
-    );
-
-    const validGravValues = useMemo(() => {
-            return(selectedYearIndexes.map(x=>accidentData.grav[x]))
-        },
-        [selectedYear]
-    );
-
-    const nbHospitalizedSelectedYear = useMemo(() => {
-            return(getIndexes(
-                validGravValues,
-                3
-            ).map(x=>accidentData.grav[x]).length)
-        },
-        [validGravValues]
-    );
-
-    const nbDeathsSelectedYear = useMemo(() => {
-            return(getIndexes(validGravValues, 2).length)
-        },
-        [validGravValues]
+        [accidentData, idxFilterSet]
     );
 
     // Full data plot
@@ -93,29 +127,101 @@ export default function TemporalPage({uniqueYears,
     const handlePopoverClose = () => {
       setAnchorEl(null);
     };
+
     const open = Boolean(anchorEl);
 
+    // TODO: Move to app level
+    const monthIndexMap = useMemo(() => {
+        let out = new Map()
+        for(let month of monthList){
+            out.set(month, getIndexesSet(accidentData['mois'], month))
+        }
+        return(out)
+    }, [])
+
+    const yearIndexMap = useMemo(() => {
+        let out = new Map()
+        for(let year of uniqueYears){
+            out.set(year, getIndexesSet(accidentData['an'], year))
+        }
+        return(out)
+    }, [])
+
+    const idxFilterSetNoYears = useMemo(() => {
+        //let tempTest = concatIdxMapSet(idxFilterMap, new Set(['an']))
+        //console.log(`undef: ${tempTest === undefined}, is set: ${tempTest instanceof Set}`)
+        //console.log(`idxFilterSetNoYears: ${[...tempTest.values()]}`)
+        //console.dir(tempTest)
+        //return(idxFilterMap.size === 0 ? undefined : concatIdxMapSet(idxFilterMap, new Set(['an'])))
+        return(concatIdxMapSet(idxFilterMap, new Set(['an'])))
+    }, [idxFilterMap]);
+
+    const yearIndexMapFilteredNoYears = useMemo(() => {
+        let out = new Map()
+        if(idxFilterSetNoYears.size === 0){
+            for(let year of uniqueYears){
+                out.set(year, new Set())
+            }
+            return(out)
+        }
+        for(let year of uniqueYears){
+            out.set(year, yearIndexMap.get(year).intersection(idxFilterSetNoYears))
+        }
+        return(out)
+    }, [idxFilterSetNoYears, yearIndexMap])
+
+    //const seasonalData = useMemo(() => {
+    //    let data = []
+    //    for(let month of monthList){
+    //        data.push(getIndexes(accidentData['mois'], month, idxFilterSet).length)
+    //    }
+    //}, [])
+
     const monthPlotTraces = useMemo(() => {
-            let arrayLength = monthList.length * uniqueYears.length
-            let labels = new Array(arrayLength)
-            let data = new Array(arrayLength)
-            let filterMap = new Map()
+            console.log(`Load month plot.`)
+            //let arrayLength = monthList.length// * uniqueYears.length
+            //let labels = new Array(arrayLength)
+            //let data = new Array(arrayLength)
+            let data = []
+            //let localFilterMap = new Map()
+            //console.log(`is undef: ${idxFilterSet === undefined}, is set: ${idxFilterSet instanceof Set}`)
+            if(idxFilterSet !== undefined && idxFilterSet.size !== 0){
+                for(let month of monthList){
+                    data.push(
+                        monthIndexMap.get(month).intersection(idxFilterSet).size
+                    )
+                }        
+            }
+            else{
+                for(let month of monthList){
+                    data.push(
+                        monthIndexMap.get(month).size
+                    )
+
+                }
+            }
+            
+            /*
             for(let i=0;i<uniqueYears.length;i++){
-                filterMap.set("an", uniqueYears[i])
+                //console.log(`an: ${uniqueYears[i]}`)
+                localFilterMap.set("an", uniqueYears[i])
                 for(let j=0;j<monthList.length;j++){
-                    filterMap.set("mois", monthList[j])
+                    localFilterMap.set("mois", monthList[j])
                     labels[(i*monthList.length)+j] = `${uniqueYears[i]}-${monthList[j]}`
                     data[(i*monthList.length)+j] = filterByValues(
                         accidentData,
-                        filterMap
+                        localFilterMap,
+                        idxFilterSet // Set individual 
                     ).length
+                    //console.log(`month: ${monthList[j]}, val: ${data[(i*monthList.length)+j]}`)
                 }
             }
+            */
             return([
                 {
                     x: monthList,
                     y: data,
-                    type: 'scattergl',
+                    type: 'scatter',
                     mode: 'lines+markers',
                     marker: {
                         color: theme.plotColors.single_line_color,
@@ -123,14 +229,14 @@ export default function TemporalPage({uniqueYears,
                     name: "Accidents par mois",
                     hovertemplate: `Mois: %{x}<br>`+
                                    `Nombre: %{y}<br>`+
-                                   `Année: ${selectedYear}`,
+                                   `Année: ${selectedYears[0]}-${selectedYears[1]}`,
                     //hovertext: monthList,
                     //text: monthList,
                 }
             ])
             //return([labels, data])
         },
-        []
+        [/*filterMapChangeFlag, */idxFilterSet]
     )
 
     const monthPlotLayout = useMemo(() => {
@@ -177,17 +283,36 @@ export default function TemporalPage({uniqueYears,
         },
         []
     );
-
+    // FIX: !!!!!!!!!!!!!!!!!!!!! When sex Féminin is selected plot shows all 0's. Woeks normal with mens !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     const yearPlotTraces = useMemo(() => {
+            //let usedIdxFilterMap = new Map(idxFilterMap)
+            //if(usedIdxFilterMap.has('an')){
+            //    usedIdxFilterMap.delete('an')
+            //}
+            //let localFilterSet = usedIdxFilterMap.size === 0 ? undefined : concatIdxMapSet(usedIdxFilterMap)
+            //console.log(`filter set - year: ${[...concatIdxMapSet(usedIdxFilterMap)]}`)
+            let data = []
+            if(idxFilterSetNoYears.size === 0){
+                for(let year of uniqueYears){
+                    data.push(yearIndexMap.get(year).size)
+                }  
+            }
+            else{
+                for(let year of uniqueYears){
+                    data.push(yearIndexMapFilteredNoYears.get(year).size)
+                }
+            }
             return([
                 {
                     x: uniqueYears,
-                    y: countValues(
+                    y: data,/*countValues(
                         accidentData,
                         // TODO: Replace with component parameter
                         uniqueYears,
-                        'an'
-                    ),
+                        'an',
+                        idxFilterSetNoYears
+                        //usedIdxFilterMap.size === 0 ? undefined : concatIdxMapSet(usedIdxFilterMap)
+                    ),*/
                     type: 'scatter',
                     mode: 'lines+markers',
                     //marker: {color: 'red'},
@@ -196,9 +321,7 @@ export default function TemporalPage({uniqueYears,
                                    `Nombre: %{y}`,
                 },
             ])
-        },
-        []
-    );
+        }, [idxFilterSetNoYears]);
 
     const yearPlotLayout = useMemo(() => {
             return({
@@ -251,41 +374,91 @@ export default function TemporalPage({uniqueYears,
             let arrayLength = monthList.length * uniqueYears.length
             let labels = new Array(arrayLength)
             let data = new Array(arrayLength)
-            let filterMap = new Map()
-            for(let i=0;i<uniqueYears.length;i++){
-                filterMap.set("an", uniqueYears[i])
-                for(let j=0;j<monthList.length;j++){
-                    filterMap.set("mois", monthList[j])
-                    labels[(i*monthList.length)+j] = `${uniqueYears[i]}-${monthList[j]}`
-                    data[(i*monthList.length)+j] = filterByValues(
-                        accidentData,
-                        filterMap
-                    ).length
+            //let filterMap = new Map()
+            //for(let i=0;i<uniqueYears.length;i++){
+            //    filterMap.set("an", uniqueYears[i])
+            //    for(let j=0;j<monthList.length;j++){
+            //        filterMap.set("mois", monthList[j])
+            //        labels[(i*monthList.length)+j] = `${uniqueYears[i]}-${monthList[j]}`
+            //        data[(i*monthList.length)+j] = filterByValues(
+            //            accidentData,
+            //            filterMap,
+            //            idxFilterSetNoYears.size === 0 ? undefined : idxFilterSetNoYears
+            //        ).length
+            //    }
+            //}
+            if(idxFilterSetNoYears.size === 0){
+                for(let i=0;i<uniqueYears.length;i++){
+                    for(let j=0;j<monthList.length;j++){
+                        labels[(i*monthList.length)+j] = `${uniqueYears[i]}-${monthList[j]}`
+                        data[(i*monthList.length)+j] = yearIndexMap.get(
+                            uniqueYears[i]
+                        ).intersection(monthIndexMap.get(monthList[j])).size
+                    }
                 }
             }
-            
+            else{
+                for(let i=0;i<uniqueYears.length;i++){
+                    for(let j=0;j<monthList.length;j++){
+                        labels[(i*monthList.length)+j] = `${uniqueYears[i]}-${monthList[j]}`
+                        //console.log(`year: ${uniqueYears[i]}, set len: ${yearIndexMap.get(
+                        //    uniqueYears[i]
+                        //).size}`)
+                        //console.log(`month: ${monthList[j]}, set len: ${monthIndexMap.get(monthList[j])}`)
+                        //console.log(``)
+                        //console.log(``)
+                        //console.log(``)
+                        data[(i*monthList.length)+j] = yearIndexMapFilteredNoYears.get(
+                            uniqueYears[i]
+                        ).intersection(monthIndexMap.get(monthList[j])).size
+                    }
+                }
+            }
             // useEffect
+            /*
             let plotData = buildFullTimelineCountData(
                 monthList,
                 // TODO: Replace with component parameter
                 uniqueYears
-            )
-            setFullTimePlotAllXLabels(plotData[0])
-            setFullTimePlotAllYData(plotData[1])
-            let smoothedData = new Array(plotData[0].length)
-            let averageData = rollingAverage(plotData[1], 6)
+            )*/
+            setFullTimePlotAllXLabels(labels/*plotData[0]*/)
+            setFullTimePlotAllYData(data/*plotData[1]*/)
+            let smoothedData = new Array(/*plotData[0]*/labels.length)
+            let averageData = rollingAverage(/*plotData[1]*/data, 12)
             setFullTimePlotSmoothedData(averageData)
-            let seasonalData = concatSeasonalData(
-                calculateSeasonalData(
-                    accidentData,
-                    monthList,
-                    uniqueYears
-                ),
-                uniqueYears.length
-            )
+            let seasonalData = []
+            if(idxFilterSetNoYears.size === 0){
+                for(let month of monthList){
+                    seasonalData.push(monthIndexMap.get(month).size / uniqueYears.length)
+                }
+            }
+            else{
+                for(let month of monthList){
+                    seasonalData.push(
+                        monthIndexMap.get(month).intersection(
+                            idxFilterSetNoYears
+                        ).size / uniqueYears.length
+                    )
+                }
+            }
+            let tempArray = new Array(...seasonalData)
+            //console.log(`seasonalData len: ${seasonalData.length}`)
+            for(let year of uniqueYears){
+                seasonalData.push(...tempArray)
+                //console.log(`year: ${year}, len: ${seasonalData.length}`)
+            }
+            //let seasonalData = concatSeasonalData(
+            //    calculateSeasonalData(
+            //        accidentData,
+            //        monthList,
+            //        uniqueYears
+            //    ),
+            //    uniqueYears.length
+            //)
             setFullTimePlotSeasonalData(seasonalData)
             let residualData = calcResidualsData(
-                plotData[1],
+                /*plotData[1],*/
+                data,
                 averageData,
                 seasonalData
             )
@@ -295,7 +468,7 @@ export default function TemporalPage({uniqueYears,
                 {
                     x: fullTimePlotAllXLabels,
                     y: fullTimePlotAllYData,
-                    type: 'scattergl',
+                    type: 'scatter',
                     mode: 'lines',
                     name: "Nombre d'accidents",
                     //marker: {color: 'red'},
@@ -305,7 +478,7 @@ export default function TemporalPage({uniqueYears,
                 {
                     x: fullTimePlotAllXLabels,
                     y: fullTimePlotSmoothedData,
-                    type: 'scattergl',
+                    type: 'scatter',
                     mode: 'lines',
                     name: 'Moyenne sur 12 mois',
                     marker: {color: 'red'},
@@ -325,7 +498,7 @@ export default function TemporalPage({uniqueYears,
                 {
                     x: fullTimePlotAllXLabels,
                     y: fullTimePlotResidualData,
-                    type: 'scattergl',
+                    type: 'scatter',
                     mode: 'lines',
                     name: 'Résidus',
                     marker: {color: 'green'},
@@ -333,9 +506,7 @@ export default function TemporalPage({uniqueYears,
                                    `Nombre: %{y}`,
                 },
             ])
-        },
-        []
-    );
+        }, [idxFilterSetNoYears, yearIndexMapFilteredNoYears]);
 
     const monthYearPlotLayout = useMemo(() => {
             return({
@@ -397,9 +568,7 @@ export default function TemporalPage({uniqueYears,
                     fixedrange: true
                 }
             })
-        },
-        []
-    );
+        }, []);
 
     // All elements that depend on selected year
     //useEffect(() => {
@@ -415,6 +584,7 @@ export default function TemporalPage({uniqueYears,
     //}, [selectedYear]);
 
     // Build month year data plot
+    /*
     useEffect(() => {
         let plotData = buildFullTimelineCountData(
             monthList,
@@ -443,15 +613,17 @@ export default function TemporalPage({uniqueYears,
         //console.log(`season data: ${fullTimePlotSeasonalData}`)
         setFullTimePlotResidualData(residualData)
     }, [accidentData]);
-
+    */
     /**
      * Calculates the values and the x axis labels for the full timeline plot.
      * @param {Array} monthList Array of months ordered months.
      * @param {Array} uniqueYears Array of unique years present in the data.
+     * @param {Set} subsetIdx .
      * @returns List with array of labels as first position and array of values
      *  as second position.
      */
-    function buildFullTimelineCountData(monthList, uniqueYears){
+    /*
+    function buildFullTimelineCountData(monthList, uniqueYears, subsetIdx = undefined){
         let arrayLength = monthList.length * uniqueYears.length
         let labels = new Array(arrayLength)
         let data = new Array(arrayLength)
@@ -468,7 +640,7 @@ export default function TemporalPage({uniqueYears,
             }
         }
         return([labels, data])
-    }
+    }*/
 
     // DEBUG
     //console.log(`Selected year: ${selectedYear}`)
@@ -482,7 +654,7 @@ export default function TemporalPage({uniqueYears,
                 <span id="keyNumbersParentSpan">
                     <div className='keyNumbersElementDiv'>
                         <span>
-                            Nombre d'accidents recensés en {selectedYear}:
+                            Nombre d'accidents entre {selectedYears[0]} et {selectedYears[1]}:
                         </span>
                         <span 
                             className='keyNumberSpan' 
@@ -491,7 +663,7 @@ export default function TemporalPage({uniqueYears,
                             onMouseEnter={handlePopoverOpen}
                             onMouseLeave={handlePopoverClose}
                         >
-                            {nbAccidentsSelectedYear}
+                            {nbAccidentsSelectedYears}
                             <Popover
                                 id="mouse-over-popover"
                                 sx={{ pointerEvents: 'none' }}
@@ -514,29 +686,29 @@ export default function TemporalPage({uniqueYears,
                     </div>
                     <div className='keyNumbersElementDiv'>
                         <span>
-                            Nombre de morts en {selectedYear}:
+                            Nombre de morts entre {selectedYears[0]} et {selectedYears[1]}:
                         </span>
                         <span className='keyNumberSpan'>
-                            {nbDeathsSelectedYear}
+                            {nbDeathsSelectedYears}
                         </span>
                         <span>
                             Représente {
-                                ((nbDeathsSelectedYear/
-                                nbAccidentsSelectedYear)*100).toFixed(2)
+                                ((nbDeathsSelectedYears/
+                                nbAccidentsSelectedYears)*100).toFixed(2)
                             }% des accidents totaux.
                         </span>
                     </div>
                     <div className='keyNumbersElementDiv'>
                         <span>
-                            Nombre d'hospitalisations en {selectedYear}:
+                            Nombre d'hospitalisations entre {selectedYears[0]} et {selectedYears[1]}:
                         </span>
                         <span className='keyNumberSpan'>
-                            {nbHospitalizedSelectedYear}
+                            {nbHospitalizedSelectedYears}
                         </span>
                         <span>
                             Représente {
-                                ((nbHospitalizedSelectedYear/
-                                nbAccidentsSelectedYear)*100).toFixed(2)
+                                ((nbHospitalizedSelectedYears/
+                                nbAccidentsSelectedYears)*100).toFixed(2)
                             }% des accidents totaux.
                         </span>
                     </div>
@@ -546,6 +718,7 @@ export default function TemporalPage({uniqueYears,
                 <span id="topGraphSpan">
                     <div>
                         <Plot
+                            key={filterMap}
                             data={monthPlotTraces}
                             layout={monthPlotLayout}
                         />
@@ -563,7 +736,7 @@ export default function TemporalPage({uniqueYears,
                             {
                                 x: fullTimePlotAllXLabels,
                                 y: fullTimePlotAllYData,
-                                type: 'scattergl',
+                                type: 'scatter',
                                 mode: 'lines',
                                 name: "Nombre d'accidents",
                                 //marker: {color: 'red'},
@@ -573,7 +746,7 @@ export default function TemporalPage({uniqueYears,
                             {
                                 x: fullTimePlotAllXLabels,
                                 y: fullTimePlotSmoothedData,
-                                type: 'scattergl',
+                                type: 'scatter',
                                 mode: 'lines',
                                 name: 'Moyenne sur 12 mois',
                                 marker: {color: 'red'},
@@ -583,7 +756,7 @@ export default function TemporalPage({uniqueYears,
                             {
                                 x: fullTimePlotAllXLabels,
                                 y: fullTimePlotSeasonalData,
-                                type: 'scattergl',
+                                type: 'scatter',
                                 mode: 'lines',
                                 name: 'Saisonnalité',
                                 marker: {color: 'blue'},
@@ -593,7 +766,7 @@ export default function TemporalPage({uniqueYears,
                             {
                                 x: fullTimePlotAllXLabels,
                                 y: fullTimePlotResidualData,
-                                type: 'scattergl',
+                                type: 'scatter',
                                 mode: 'lines',
                                 name: 'Résidus',
                                 marker: {color: 'green'},

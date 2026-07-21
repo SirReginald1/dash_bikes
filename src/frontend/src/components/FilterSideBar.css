@@ -1,0 +1,12 @@
+#rootSideBar {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 20%;
+    background: rgb(36, 36, 36);
+}
+
+#rootHeaderDiv {
+    margin-bottom: 10%;
+}

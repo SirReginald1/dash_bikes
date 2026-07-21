@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef } from 'react'
-import { useTheme } from "@mui/material/styles"
+//import { useState, useEffect, useRef } from 'react'
+//import { useTheme } from "@mui/material/styles"
 import { FormControl, Select, MenuItem } from "@mui/material"
 //import Autocomplete from '@mui/material/Autocomplete';
 //import TextField from '@mui/material/TextField';
 //import Plot from 'react-plotly.js'
-import { colors } from '@mui/material'
+//import { colors } from '@mui/material'
 import CatFilterSelector from './CatFilterSelector.jsx'
 import ContinuFilterSelector from './ContinuFilterSelector.jsx'
 import "./FilterSelection.css"
@@ -39,7 +39,8 @@ export default function FilterSelection({accidentData,
                                          includeNullVals = true,
                                          excludedVars = [],
                                          categoricalVars = [],
-                                         continuousVars = []
+                                         continuousVars = [],
+                                         callbackFunctionMap = undefined
                                         }){
 
     function buildValueLookupMap(variableKeyMap){
@@ -98,6 +99,7 @@ export default function FilterSelection({accidentData,
                             dropdownLabel={variableKeyMap[key]["full_label"]}
                             options={Object.entries(variableKeyMap[key]["keys"])}
                             selectionFunction={setFilterMapFunction}
+                            callbackFunction={callbackFunctionMap === undefined ? undefined : callbackFunctionMap.get(key)}
                         />
                         //<Autocomplete
                         //    multiple
@@ -141,6 +143,7 @@ export default function FilterSelection({accidentData,
                             nullReplaceValue={nullReplaceValue}
                             setMin={setMin}
                             setMax={setMax}
+                            callbackFunction={callbackFunctionMap === undefined ? undefined : callbackFunctionMap.get(key)}
                         />
                     )
                 }
