@@ -79,7 +79,7 @@ function App() {
 
   //const [filterMapChangeFlag, setFilterMapChangeFlag] = useState(false);
 
-  const [filterBarIsOpen, setFilterBarIsOpen] = useState(0);
+  const [filterBarIsOpen, setFilterBarIsOpen] = useState(false);
 
   // TODO: Remove idxFilterMap as filter map already calculates indexes
   const idxFilterMap = useMemo(() => {

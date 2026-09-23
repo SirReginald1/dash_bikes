@@ -40,13 +40,31 @@
   text-overflow: ellipsis;
 }
 
-.navBarLogo, .sideBarMenuBtnImg {
+#navBarLogo, .sideBarMenuBtnImg {
   height: var(--navBarHeight);
 }
+
+#navBarLogo {
+  filter: 
+    hue-rotate(var(--logoHueOffset)) 
+    saturate(var(--logoSaturationOffset));
+}
+
+#navbarFilterButton {
+  /*
+  color: var(--navbarBtnTextColor);
+  border-color: var(--navbarBtnBoarderColor);
+  background-color: var(--navbarBtnFillColor);
+  */
+  }
 
 .navbarMenuBtn > svg {
   color: var(--navbarElementColor);
 }
+/*
+#navbarFilterButton span {
+  background-color: var(--navbarBtnFillColor);
+}*/
 
 .mainNavBar .MuiSelect-select .navbarMenuItem {
   color: var(--navbarDropdownSelectedTextColor);
@@ -61,17 +79,17 @@
 
 /* Dropdown menu selection color */
 div[role="presentation"]>.MuiPaper-root {
-  color: var(--navbarDropdownSelectionItems);
+  /*color: var(--navbarDropdownSelectionItems);*/
 }
 
 /* Dropdown menu selected color */
 div[role="combobox"] {
-  color: var(--navbarSelectedDropdownItem);
+  /*color: var(--navbarSelectedDropdownItem);*/
 }
 
 /* Dropdown arrow color */
 path[d="M7 10l5 5 5-5z"] {
-  color: var(--navbarDropdownArrow);
+  /*color: var(--navbarDropdownArrow);*/
 }
 
 .MuiSelect-select:hover {

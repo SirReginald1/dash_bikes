@@ -102,6 +102,7 @@ export default function MainPage({ filterBarIsOpen,
                         colorVarSelected={colorVarSelected}
                         idxFilterMap={idxFilterMap}
                         idxFilterSet={idxFilterSet}
+                        filterBarIsOpen={filterBarIsOpen}
                     />
                 )
             case "Accidents par région/département":

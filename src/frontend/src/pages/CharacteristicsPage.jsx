@@ -4,22 +4,10 @@ import Slider from '@mui/material/Slider';
 import {Select, MenuItem, InputLabel} from "@mui/material";
 import Plot from 'react-plotly.js'
 import { getIndexes,
-         filterByValues,
          monthList,
-         countValues,
-         rollingAverage,
-         calculateSeasonalData,
-         concatSeasonalData,
-         calcResidualsData,
-         countValuesWithSubset,
-         groupDataIdx,
-         getCatPlotValsAndLabs,
-         groupDataCount,
          getIndexesCategorical,
          getIndexesSet,
-         getIndexContinuBracket,
          getIndexesCategoricalSet,
-         groupDataIdxSet
         } from "../utils"
 import "./CharacteristicsPage.css"
 
@@ -39,37 +27,6 @@ export default function CharacteristicsPage({uniqueYears,
                                              uniqueVariablesTemp,}){
     
     const theme = useTheme();
-
-    // DEBUG
-    /*
-    let accidentDataTemp ={
-        an:     [2025,      2026,   2024,   2026,   2023,   2026,   2025,      2026,   2024,   2026,   2023,   2026,    2024],
-        grav:   [2,         2,      4,      3,      1,      2,      2,         2,      2,      3,      1,      2,       1],
-        mois:   ["juillet", "juin", "mai", "avril", "juin", "juin", "juillet", "juin", "mai", "avril", "juin", "juin", "septembre"],
-        age:    [20,        20,     30,     30,     30,     16,     30,         30,     25,    26,      65,     68,     65],
-    }
-    
-    let variableKeyMapTemp = {
-        grav: {
-            keys: {"1": "Indemne", "2": "Tué", "3": "Blessé hospitalisé", "4": "Blessé léger"},
-            full_label: "Gravité de blessure de l'usager",
-            short_label: "Gravité",
-        },
-        age:{
-            description: "Age de l'usager",
-            full_label: "Age de l'usager",
-            short_label: "Age",
-            load_as: "int",
-            cat_group: {
-                    "Moins de 18ans": [0, 17],
-                    "Entre 18 et 30 ans": [18, 29],
-                    "Entre 30 et 50 ans": [30, 49],
-                    "Plus de 50 ans": [50, 9999]
-               }
-        }
-    }
-    */
-    //let uniqueYearsTemp = [... new Set(accidentData.an)].sort()
 
     let uniqueVariables = Object.keys(variableKeyMap)
 
@@ -114,19 +71,6 @@ export default function CharacteristicsPage({uniqueYears,
         },
         [selectedYears, accidentData]
     );
-
-    /*useEffect(() => {
-        console.log("filterMap")
-        for(let [k, v] of filterMap.entries()){
-            console.log(`key: ${k}, val: ${v.size}`)
-        }
-        console.log("idxFilterSet")
-        console.log(idxFilterSet.size)
-    }, [filterMap, idxFilterSet])*/
-
-    //const [selectedYearIndexes]
-
-    //const [selectedVariable, setSelectedVariable] = useState("grav");
 
     const [selectedVariable1, setSelectedVariable1] = useState("age");
 
@@ -254,6 +198,20 @@ export default function CharacteristicsPage({uniqueYears,
         }, [selectedYears, selectedVariable1, idxFilterSet]);
 
     const stackedPlotLayout = useMemo(() => {
+        let titleContent = `Nombre d'accidents par ${
+            variableKeyMap[selectedVariable1]["full_label"].toLowerCase()
+        } années ${selectedYears[0]}-${selectedYears[1]}`
+        let titleIsLong = titleContent.length > 72
+        if(titleIsLong){
+            // Find first space before len 72
+            for(let i=72;i>0;i--){
+                if(titleContent[i] === ' '){
+                   titleContent = `${titleContent.substring(0, i)}<br>
+                    ${titleContent.substring(i + 1, titleContent.length)}`
+                    break
+                }
+            }
+        }
         return(
             {
                 //width: 320,
@@ -261,7 +219,7 @@ export default function CharacteristicsPage({uniqueYears,
                 plot_bgcolor: theme.plotColors.plot_bgcolor,
                 paper_bgcolor: theme.plotColors.paper_bgcolor,
                 margin: {
-                    t: 30,
+                    t: titleIsLong ? 50 : 30,
                     b: 50,
                     r: 20,
                     l: 50,
@@ -275,10 +233,8 @@ export default function CharacteristicsPage({uniqueYears,
                         },
                     },
                 title: {
-                    text: `<b>Nombre d'accidents par ${
-                        variableKeyMap[selectedVariable1]["full_label"].toLowerCase()
-                    } années ${selectedYears[0]}-${selectedYears[1]}</b>`,
-                    y: 0.98,
+                    text: `<b>${titleContent}</b>`,
+                    y: titleIsLong ? 0.96 : 0.98,
                     x: 0.5,
                     xanchor: 'center',
                     yanchor: 'top',
@@ -516,6 +472,7 @@ export default function CharacteristicsPage({uniqueYears,
                     xPos = [0.19, 0.815, 0.185, 0.805]
                     yPos = [0.79, 0.79, 0.22, 0.22]
                     break;
+                //case ""
                 default:
                     xPos = [0.19, 0.815, 0.185, 0.805]
                     yPos = [0.79, 0.79, 0.22, 0.22]
@@ -673,10 +630,11 @@ export default function CharacteristicsPage({uniqueYears,
                         <div id="varDropdownDiv">
                             <span id='varDropdownSpan'>
                                 <div>
-                                    <InputLabel>
+                                    <InputLabel className='varLabel'>
                                         Variable 1
                                     </InputLabel>
                                     <Select
+                                        className='varSelectDropdown'
                                         size="small"
                                         value={selectedVariable1}
                                         onChange={
@@ -702,10 +660,11 @@ export default function CharacteristicsPage({uniqueYears,
                                     </Select>
                                 </div>
                                 <div>
-                                    <InputLabel>
+                                    <InputLabel className='varLabel'>
                                         Variable 2
                                     </InputLabel>
                                     <Select
+                                        className='varSelectDropdown'
                                         size="small"
                                         value={selectedVariable2}
                                         onChange={
