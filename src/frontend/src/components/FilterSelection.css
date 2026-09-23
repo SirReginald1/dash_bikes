@@ -5,8 +5,8 @@
 
 
 #controlParentDiv {
-    overflow-y: auto;
-    overflow-x: hidden;
+    /*overflow-y: auto;
+    overflow-x: hidden;*/
     /*background-color: aqua;*/
     height: 100%;
     width: 80%;

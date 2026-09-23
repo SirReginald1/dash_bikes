@@ -2,3 +2,12 @@
     display: flex;
     justify-content: space-between;
 }
+
+.varLabel {
+    margin-top: 5%;
+    margin-bottom: 5%;
+}
+
+.varSelectDropdown {
+    margin-bottom: 5%;
+}

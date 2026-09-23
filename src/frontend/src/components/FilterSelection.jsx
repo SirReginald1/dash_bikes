@@ -1,10 +1,4 @@
-//import { useState, useEffect, useRef } from 'react'
-//import { useTheme } from "@mui/material/styles"
-import { FormControl, Select, MenuItem } from "@mui/material"
-//import Autocomplete from '@mui/material/Autocomplete';
-//import TextField from '@mui/material/TextField';
-//import Plot from 'react-plotly.js'
-//import { colors } from '@mui/material'
+import { FormControl } from "@mui/material"
 import CatFilterSelector from './CatFilterSelector.jsx'
 import ContinuFilterSelector from './ContinuFilterSelector.jsx'
 import "./FilterSelection.css"
@@ -40,7 +34,9 @@ export default function FilterSelection({accidentData,
                                          excludedVars = [],
                                          categoricalVars = [],
                                          continuousVars = [],
-                                         callbackFunctionMap = undefined
+                                         callbackFunctionMap = undefined,
+                                         elementInsertMap = undefined,
+                                         sliderColor = undefined,
                                         }){
 
     function buildValueLookupMap(variableKeyMap){
@@ -144,6 +140,7 @@ export default function FilterSelection({accidentData,
                             setMin={setMin}
                             setMax={setMax}
                             callbackFunction={callbackFunctionMap === undefined ? undefined : callbackFunctionMap.get(key)}
+                            sliderColor={sliderColor}
                         />
                     )
                 }

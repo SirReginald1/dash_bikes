@@ -1,16 +1,11 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { useTheme } from "@mui/material/styles"
 import Popover from '@mui/material/Popover';
 import Plot from 'react-plotly.js'
-import { getIndexes,
-         filterByValues,
-         monthList,
-         countValues,
+import { monthList,
          rollingAverage,
-         calculateSeasonalData,
-         concatSeasonalData,
          calcResidualsData,
-         concatIdxMapSet, 
+         concatIdxMapSet,
          getIndexesSet} from "../utils"
 import "./TemporalPage.css"
 
@@ -247,8 +242,8 @@ export default function TemporalPage({uniqueYears,
                 paper_bgcolor: theme.plotColors.paper_bgcolor,
                 margin: {
                         t: 30,
-                        b: 35,
-                        r: 10,
+                        b: 45,
+                        r: 20,
                         l: 50,
                     },
                 title: {
@@ -268,6 +263,7 @@ export default function TemporalPage({uniqueYears,
                     gridcolor: theme.plotColors.xaxis_grid_color,
                     title: {
                         text: 'Année',
+                        xanchor: 'bottom',
                     },
                     dtick: 1,
                 },
@@ -281,7 +277,7 @@ export default function TemporalPage({uniqueYears,
                 }
             })
         },
-        []
+        [theme]
     );
     // FIX: !!!!!!!!!!!!!!!!!!!!! When sex Féminin is selected plot shows all 0's. Woeks normal with mens !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     const yearPlotTraces = useMemo(() => {
@@ -331,7 +327,7 @@ export default function TemporalPage({uniqueYears,
                 paper_bgcolor: theme.plotColors.paper_bgcolor,
                 margin: {
                         t: 30,
-                        b: 35,
+                        b: 45,
                         r: 10,
                         l: 50,
                     },
@@ -365,7 +361,7 @@ export default function TemporalPage({uniqueYears,
                 }
             })
         },
-        []
+        [theme]
     );
 
     const monthYearPlotTraces = useMemo(() => {
@@ -423,7 +419,7 @@ export default function TemporalPage({uniqueYears,
             )*/
             setFullTimePlotAllXLabels(labels/*plotData[0]*/)
             setFullTimePlotAllYData(data/*plotData[1]*/)
-            let smoothedData = new Array(/*plotData[0]*/labels.length)
+            //let smoothedData = new Array(/*plotData[0]*/labels.length)
             let averageData = rollingAverage(/*plotData[1]*/data, 12)
             setFullTimePlotSmoothedData(averageData)
             let seasonalData = []
@@ -557,7 +553,8 @@ export default function TemporalPage({uniqueYears,
                     //        }
                     //    ]
                     //},
-                    rangeslider: {}
+                    rangeslider: {},
+                    tickangle: 60,
                 },
                 yaxis: {
                     color: theme.plotColors.yaxis_color,
@@ -568,7 +565,7 @@ export default function TemporalPage({uniqueYears,
                     fixedrange: true
                 }
             })
-        }, []);
+        }, [theme]);
 
     // All elements that depend on selected year
     //useEffect(() => {
@@ -716,21 +713,21 @@ export default function TemporalPage({uniqueYears,
             </div>
             <div id="mainTemporalGraphDiv">
                 <span id="topGraphSpan">
-                    <div>
+                    <div className='plotDiv'>
                         <Plot
                             key={filterMap}
                             data={monthPlotTraces}
                             layout={monthPlotLayout}
                         />
                     </div>
-                    <div>
+                    <div className='plotDiv'>
                         <Plot
                         data={yearPlotTraces}
                         layout={yearPlotLayout}
                     />
                     </div>
                 </span>
-                <div>
+                <div className='plotDiv'>
                     <Plot
                         data={[
                             {

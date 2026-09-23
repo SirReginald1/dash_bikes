@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef } from 'react'
-import { useTheme } from "@mui/material/styles"
+import { useState } from 'react'
+//import { useTheme } from "@mui/material/styles"
 //import {FormControl, Select, MenuItem} from "@mui/material"
 import Slider from '@mui/material/Slider';
-import { colors } from '@mui/material'
-import { buildSelectedYearSet } from '../utils'
+import { styled, useTheme } from '@mui/material/styles';
+//import { colors } from '@mui/material'
+//import { buildSelectedYearSet } from '../utils'
 import "./ContinuFilterSelector.css"
 
 const minDistance = 0;
@@ -26,8 +27,11 @@ export default function ContinuFilterSelector({dataArray,
                                                nullReplaceValue = undefined,
                                                setMin = undefined,
                                                setMax = undefined,
-                                               callbackFunction = undefined
+                                               callbackFunction = undefined,
+                                               sliderColor = undefined
                                                }){
+
+    const theme = useTheme();
 
     const minValue = setMin === undefined ? Math.min(...dataArray) : setMin
 
@@ -35,13 +39,19 @@ export default function ContinuFilterSelector({dataArray,
 
     const [selectedValues, setSelectedValues] = useState([minValue, maxValue]);
 
+    const sliderColorDefined = sliderColor === undefined ? 'lightblue' : sliderColor
+
+    const FilterSlider = styled(Slider)(({ theme }) => ({
+        color: theme.customThemes.widgetColor === undefined ? sliderColorDefined : theme.customThemes.widgetColor//sliderColorDefined
+    }))
+
     return(
         <div>
             <h5 id='sliderTitle'>
                 {`${variableDescription}: ${
                     selectedValues[0]}, ${selectedValues[1]}`}
             </h5>
-            <Slider
+            <FilterSlider
                 onChangeCommitted={
                     (event, value) => {
                         setSelectedValues(value)
@@ -67,6 +77,7 @@ export default function ContinuFilterSelector({dataArray,
                 max={maxValue}
                 disableSwap
                 //valueLabelDisplay="off"
+                color={sliderColorDefined}
             />
       
         </div>

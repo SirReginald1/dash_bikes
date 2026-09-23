@@ -4,7 +4,7 @@
     /*height: 100%;*/
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: calc(100vh - var(--navBarHeight));
 }
 
 #colorVarSelectFormControl {
@@ -24,7 +24,8 @@
 }
 
 #mapDiv {
-    width: 80%;
+    width: 100%;
+    /*height: calc(100% - var(--navBarHeight));*/
     height: 100%;
     padding: 15px;
 }

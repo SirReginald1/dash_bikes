@@ -1,5 +1,3 @@
-import {useMemo} from "react";
-import Button from "@mui/material/Button";
 import FilterSelection from '../components/FilterSelection.jsx'
 import "./FilterSideBar.css";
 
@@ -14,28 +12,8 @@ export default function FilterSidebar({ id,
                                         excludedVars,
                                         filterMap, /* Used to keep selection between pages*/ 
                                         headerComponent = undefined,
-                                        callbackFunctionMap}) {
-  //let header
-  //if(headerComponent === undefined){
-  //  console.log("Header undefined")
-  //  header = headerComponent
-  //}
-
-  /*
-  const header = useMemo(() => {
-    switch(){}
-    return(
-        <FilterSelection
-            accidentData={accidentData}
-            variableKeyMap={variableKeyMap}
-            setFilterMapFunction={setFilterMapFunction}
-            excludedVars={excludedVars}
-         />
-  )
-  }, [])
-  */
-
-
+                                        callbackFunctionMap,
+                                        sliderColor = undefined}) {
 
   return (
     <div id={id} className={`${className}`}>
@@ -46,6 +24,7 @@ export default function FilterSidebar({ id,
             setFilterMapFunction={setFilterMapFunction}
             excludedVars={excludedVars}
             callbackFunctionMap={callbackFunctionMap}
+            sliderColor={sliderColor}
          />
     </div>
   );

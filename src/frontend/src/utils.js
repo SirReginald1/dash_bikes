@@ -428,10 +428,67 @@ export function getIndexesCategorical(data,
     if(Object.hasOwn(variableKeyMap[variable], "keys")){
         let varEntries = Object.entries(variableKeyMap[variable]["keys"])
         for(const [value, key] of varEntries){
-            let indexes = getIndexes(
-                data[variable],
-                Number(value)
-            )
+            let indexes
+            if(variableKeyMap[variable].hasOwnProperty('use_as')){
+                    switch(variableKeyMap[variable]['use_as']){
+                      case 'int':
+                        console.log(`int`)
+                        indexes = getIndexes(
+                            data[variable],
+                            Number(value)
+                        )
+                        break;
+                      case 'float':
+                        console.log(`float`)
+                        indexes = getIndexes(
+                            data[variable],
+                            Number(value)
+                        )
+                        break;
+                      case 'str':
+                        console.log(`str`)
+                        indexes = getIndexes(
+                            data[variable],
+                            value
+                        )
+                        break;
+                      default:
+                        throw Error(
+                          'use_as parameter in metadata for '
+                          `variable ${variable} is set to `
+                          `${metadata['accidentVelo'][variable]['use_as']}. `
+                          `Only {int, float, str} are recognized`
+                        )
+                    }
+                }
+                // If type not specified and can't be cast as number
+                else if(Number.isNaN(Number(value))){
+                    //console.log("paire[0] is not a number.")
+                    indexes = getIndexes(
+                        data[variable],
+                        value
+                    )
+                }
+                // If can be cast as number
+                else{
+                    //console.log("paire[0] is a number.")
+                    //console.log(`paire[0] value: ${paire[0]}.`)
+                    //console.log(`paire[0] number cast: ${Number(paire[0])}.`)
+                    indexes = getIndexes(
+                        data[variable],
+                        Number(value)
+                    )
+                        console.log(`val: ${value}, key: ${key}, len: ${indexes.length}`)
+
+                    //console.log(`valueSet: ${[...valueSet]}.`)
+                }
+
+
+            //////////////////////////////////////////////
+            //let indexes = getIndexes(
+            //    data[variable],
+            //    Number(value)
+            //)
             if(idxSubset instanceof Set){
                 out.set(
                     key,
@@ -441,6 +498,7 @@ export function getIndexesCategorical(data,
             else{
                 out.set(key, indexes)
             }
+            ////////////////////////////////////////////
             
         }
     }
@@ -475,18 +533,73 @@ export function getIndexesCategoricalSet(data,
     if(Object.hasOwn(variableKeyMap[variable], "keys")){
         let varEntries = Object.entries(variableKeyMap[variable]["keys"])
         for(const [value, key] of varEntries){
+            let indexesSet
+            if(variableKeyMap[variable].hasOwnProperty('use_as')){
+                    switch(variableKeyMap[variable]['use_as']){
+                      case 'int':
+                        console.log(`int`)
+                        indexesSet = getIndexesSet(
+                            data[variable],
+                            Number(value)
+                        )
+                        break;
+                      case 'float':
+                        console.log(`float`)
+                        indexesSet = getIndexesSet(
+                            data[variable],
+                            Number(value)
+                        )
+                        break;
+                      case 'str':
+                        console.log(`str`)
+                        indexesSet = getIndexesSet(
+                            data[variable],
+                            value
+                        )
+                        break;
+                      default:
+                        throw Error(
+                          'use_as parameter in metadata for '
+                          `variable ${variable} is set to `
+                          `${metadata['accidentVelo'][variable]['use_as']}. `
+                          `Only {int, float, str} are recognized`
+                        )
+                    }
+                }
+                // If type not specified and can't be cast as number
+                else if(Number.isNaN(Number(value))){
+                    //console.log("paire[0] is not a number.")
+                    indexesSet = getIndexesSet(
+                        data[variable],
+                        value
+                    )
+                }
+                // If can be cast as number
+                else{
+                    //console.log("paire[0] is a number.")
+                    //console.log(`paire[0] value: ${paire[0]}.`)
+                    //console.log(`paire[0] number cast: ${Number(paire[0])}.`)
+                    indexesSet = getIndexesSet(
+                        data[variable],
+                        Number(value)
+                    )
+                    console.log(`val: ${value}, key: ${key}, len: ${indexesSet.length}`)
+
+                    //console.log(`valueSet: ${[...valueSet]}.`)
+                }
+            /*
             let indexSet = getIndexesSet(
                 data[variable],
                 Number(value)
-            )
+            )*/
             if(idxSubset instanceof Set){
                 out.set(
                     key,
-                    indexSet.intersection(idxSubset)
+                    indexesSet.intersection(idxSubset)
                 )
             }
             else{
-                out.set(key, indexSet)
+                out.set(key, indexesSet)
             }
             
         }
@@ -809,6 +922,44 @@ export function isInteger(array){
         out = out & Number.isInteger(array[i])
     }
     return(out)
+}
+
+/*
+export function textLineBreak(str, maxChar){
+    if(str.length ){ // FIX: Put breaks in lowest word break.
+        let out = ""
+        for(let offset=0;offset>=str.length;offset++){
+            out + str.substring(offset, maxChar + offset)
+        }
+        return(
+            str.substring(0, maxChar) + "<br>" + 
+            str.substring(maxChar, str.length)
+        )
+    }
+    return(str)
+}*/
+
+/**
+ * Inserts html line breaks every n characters
+ * @param {String} text The string in which to insert an html line breaks.
+ * @param {Int} maxLen The maximum width of text in characters.
+ * @returns String: The str string with line breaks inserted every maxChar
+ * characters.
+ */
+export function insertLineBreaks(text, maxLen) {
+  const words = text.split(' ');
+  let line = '';
+  let result = [];
+  for (const word of words) {
+    if (line.length + word.length + (line ? 1 : 0) > maxLen) {
+      result.push(line);
+      line = word;
+    } else {
+      line = line ? line + ' ' + word : word;
+    }
+  }
+  if (line) result.push(line);
+  return result.join('<br>');
 }
 
 /**

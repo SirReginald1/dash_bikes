@@ -102,6 +102,7 @@ export default function MainPage({ filterBarIsOpen,
                         colorVarSelected={colorVarSelected}
                         idxFilterMap={idxFilterMap}
                         idxFilterSet={idxFilterSet}
+                        filterBarIsOpen={filterBarIsOpen}
                     />
                 )
             case "Accidents par région/département":
@@ -239,6 +240,7 @@ export default function MainPage({ filterBarIsOpen,
                 excludedVars={excludedVars}
                 headerComponent={headerComponent}
                 callbackFunctionMap={callbackFunctionMap}
+                //sliderColor={theme.customThemes.widgetColor}
             />
         )
     }, [filterBarIsOpen, selectedPage, colorVarSelected, unitVarSelected, regMapSelected]);

@@ -40,13 +40,31 @@
   text-overflow: ellipsis;
 }
 
-.navBarLogo, .sideBarMenuBtnImg {
+#navBarLogo, .sideBarMenuBtnImg {
   height: var(--navBarHeight);
 }
+
+#navBarLogo {
+  filter: 
+    hue-rotate(var(--logoHueOffset)) 
+    saturate(var(--logoSaturationOffset));
+}
+
+#navbarFilterButton {
+  /*
+  color: var(--navbarBtnTextColor);
+  border-color: var(--navbarBtnBoarderColor);
+  background-color: var(--navbarBtnFillColor);
+  */
+  }
 
 .navbarMenuBtn > svg {
   color: var(--navbarElementColor);
 }
+/*
+#navbarFilterButton span {
+  background-color: var(--navbarBtnFillColor);
+}*/
 
 .mainNavBar .MuiSelect-select .navbarMenuItem {
   color: var(--navbarDropdownSelectedTextColor);
@@ -58,18 +76,27 @@
   box-shadow: none;
 }
 
+/* Toggle switch nub*/
+.css-17jyosd-MuiSwitch-thumb {
+  background-color: var(--widgetColor) !important;
+}
 
-/* Dropdown menu selection color */
+/* Background line for toggle switch */
+.css-15kf6yl-MuiButtonBase-root-MuiSwitchBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track {
+  background-color: var(--widgetColor) !important;
+}
+
+/* Dropdown menu selection color *//*
 div[role="presentation"]>.MuiPaper-root {
   color: var(--navbarDropdownSelectionItems);
 }
-
-/* Dropdown menu selected color */
+*/
+/* Dropdown menu selected color *//*
 div[role="combobox"] {
   color: var(--navbarSelectedDropdownItem);
 }
-
-/* Dropdown arrow color */
+*/
+/* Dropdown arrow color *//*
 path[d="M7 10l5 5 5-5z"] {
   color: var(--navbarDropdownArrow);
 }
@@ -77,3 +104,4 @@ path[d="M7 10l5 5 5-5z"] {
 .MuiSelect-select:hover {
   border-color: rgb(255, 0, 157);
 }
+*/

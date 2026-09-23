@@ -17,7 +17,7 @@ export default function SubmenuDropdown({submenueTitles,
 
     // Array of booleans indicating which of the submenues are open.
     const [isOpen, setIsOpen] = useState(
-        submenueTitles.map(() => false)
+        submenueTitles.map(() => true)
         //[false, false]
     );
 

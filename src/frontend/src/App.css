@@ -53,9 +53,11 @@
   width: 100vw;
 }
 
+/*
 .navbarMenuItem {
-  /*color: var(--navbarDropdownTextColor);*/
+  color: var(--navbarDropdownTextColor);
 }
+*/
 
 .Mui-selected {
   background: var(--selectedDropdownItem) !important;

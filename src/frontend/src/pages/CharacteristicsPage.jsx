@@ -4,22 +4,11 @@ import Slider from '@mui/material/Slider';
 import {Select, MenuItem, InputLabel} from "@mui/material";
 import Plot from 'react-plotly.js'
 import { getIndexes,
-         filterByValues,
          monthList,
-         countValues,
-         rollingAverage,
-         calculateSeasonalData,
-         concatSeasonalData,
-         calcResidualsData,
-         countValuesWithSubset,
-         groupDataIdx,
-         getCatPlotValsAndLabs,
-         groupDataCount,
          getIndexesCategorical,
          getIndexesSet,
-         getIndexContinuBracket,
          getIndexesCategoricalSet,
-         groupDataIdxSet
+         insertLineBreaks,
         } from "../utils"
 import "./CharacteristicsPage.css"
 
@@ -40,44 +29,17 @@ export default function CharacteristicsPage({uniqueYears,
     
     const theme = useTheme();
 
-    // DEBUG
-    /*
-    let accidentDataTemp ={
-        an:     [2025,      2026,   2024,   2026,   2023,   2026,   2025,      2026,   2024,   2026,   2023,   2026,    2024],
-        grav:   [2,         2,      4,      3,      1,      2,      2,         2,      2,      3,      1,      2,       1],
-        mois:   ["juillet", "juin", "mai", "avril", "juin", "juin", "juillet", "juin", "mai", "avril", "juin", "juin", "septembre"],
-        age:    [20,        20,     30,     30,     30,     16,     30,         30,     25,    26,      65,     68,     65],
-    }
-    
-    let variableKeyMapTemp = {
-        grav: {
-            keys: {"1": "Indemne", "2": "Tué", "3": "Blessé hospitalisé", "4": "Blessé léger"},
-            full_label: "Gravité de blessure de l'usager",
-            short_label: "Gravité",
-        },
-        age:{
-            description: "Age de l'usager",
-            full_label: "Age de l'usager",
-            short_label: "Age",
-            load_as: "int",
-            cat_group: {
-                    "Moins de 18ans": [0, 17],
-                    "Entre 18 et 30 ans": [18, 29],
-                    "Entre 30 et 50 ans": [30, 49],
-                    "Plus de 50 ans": [50, 9999]
-               }
-        }
-    }
-    */
-    //let uniqueYearsTemp = [... new Set(accidentData.an)].sort()
-
     let uniqueVariables = Object.keys(variableKeyMap)
-
+    
+    // This variable is only used build variable selection
     let categoricalVariables = []
 
     let continuousVariables = []
 
     for(const key of uniqueVariables){
+        if(key === 'dep'){
+            continue;
+        }
         if(Object.hasOwn(variableKeyMap[key], "keys") ||
             Object.hasOwn(variableKeyMap[key], "cat_group")){
                 categoricalVariables.push(key)
@@ -114,19 +76,6 @@ export default function CharacteristicsPage({uniqueYears,
         },
         [selectedYears, accidentData]
     );
-
-    /*useEffect(() => {
-        console.log("filterMap")
-        for(let [k, v] of filterMap.entries()){
-            console.log(`key: ${k}, val: ${v.size}`)
-        }
-        console.log("idxFilterSet")
-        console.log(idxFilterSet.size)
-    }, [filterMap, idxFilterSet])*/
-
-    //const [selectedYearIndexes]
-
-    //const [selectedVariable, setSelectedVariable] = useState("grav");
 
     const [selectedVariable1, setSelectedVariable1] = useState("age");
 
@@ -243,7 +192,7 @@ export default function CharacteristicsPage({uniqueYears,
                     marker: {
                         color: theme.plotColors.multi_line_color[i],
                     },
-                    name: variableKeyValues[i],//`${variableValues[i]}`,
+                    name: insertLineBreaks(variableKeyValues[i], 25),//`${variableValues[i]}`,
                     hovertemplate: `Mois: %{x}<br>`+
                                    `Nombre: %{y}<br>`+
                                    `Année: ${yearHoverLabel}`,
@@ -254,6 +203,20 @@ export default function CharacteristicsPage({uniqueYears,
         }, [selectedYears, selectedVariable1, idxFilterSet]);
 
     const stackedPlotLayout = useMemo(() => {
+        let titleContent = `Nombre d'accidents par ${
+            variableKeyMap[selectedVariable1]["full_label"].toLowerCase()
+        } années ${selectedYears[0]}-${selectedYears[1]}`
+        let titleIsLong = titleContent.length > 72
+        if(titleIsLong){
+            // Find first space before len 72
+            for(let i=72;i>0;i--){
+                if(titleContent[i] === ' '){
+                   titleContent = `${titleContent.substring(0, i)}<br>
+                    ${titleContent.substring(i + 1, titleContent.length)}`
+                    break
+                }
+            }
+        }
         return(
             {
                 //width: 320,
@@ -261,24 +224,25 @@ export default function CharacteristicsPage({uniqueYears,
                 plot_bgcolor: theme.plotColors.plot_bgcolor,
                 paper_bgcolor: theme.plotColors.paper_bgcolor,
                 margin: {
-                    t: 30,
+                    t: titleIsLong ? 50 : 30,
                     b: 50,
                     r: 20,
                     l: 50,
                 },
                 legend:{
                     title: {
-                            text: variableKeyMap[selectedVariable1]["full_label"],
+                            text: insertLineBreaks(
+                                variableKeyMap[selectedVariable1]["full_label"],
+                                26
+                            ),
                         },
                         font: {
                             color: theme.plotColors.legend_text_color,
                         },
-                    },
+                },
                 title: {
-                    text: `<b>Nombre d'accidents par ${
-                        variableKeyMap[selectedVariable1]["full_label"].toLowerCase()
-                    } années ${selectedYears[0]}-${selectedYears[1]}</b>`,
-                    y: 0.98,
+                    text: `<b>${titleContent}</b>`,
+                    y: titleIsLong ? 0.96 : 0.98,
                     x: 0.5,
                     xanchor: 'center',
                     yanchor: 'top',
@@ -306,29 +270,96 @@ export default function CharacteristicsPage({uniqueYears,
                 }
             }
         )
-    }, [selectedVariable1, selectedYears, idxFilterSet])
+    }, [selectedVariable1, selectedYears, idxFilterSet, theme])
 
     const barPlotTraces = useMemo(() => {
-            return([
-                {
-                    x: selectedVar1ValLabels,
-                    y: selectedVar1ValCounts,
+            let out = []
+            for(let idx=0;idx<selectedVar1ValLabels.length;idx++){
+                out.push({
+                    x: [selectedVar1ValLabels[idx]],
+                    y: [selectedVar1ValCounts[idx]],
                     type: 'bar',
                     //mode: 'lines+markers',
                     marker: {
-                        color: theme.plotColors.multi_line_color
+                        color: theme.plotColors.multi_line_color[idx]
                     },
-                    name: "Nombre d'accident",
+                    visible: `test ${idx}`,
+                    name: insertLineBreaks(
+                        selectedVar1ValLabels[idx],
+                        25
+                    ),
                     hovertemplate: `Blessure: %{x}<br>`+
                                    `Nombre: %{y}`,
-                }
-            ])
+                })
+            }
+            return(out)
         }, [selectedVar1ValLabels, selectedVar1ValCounts])
 
+    const barPlotLayout = useMemo(() => {
+        let out = {
+            //width: 320,
+            //height: 240,
+            plot_bgcolor: theme.plotColors.plot_bgcolor,
+            paper_bgcolor: theme.plotColors.paper_bgcolor,
+            margin: {
+                    t: 30,
+                    b: 35,
+                    r: 10,
+                    l: 50,
+                },
+            title: {
+                text: `<b>Nombre d'accident par ${
+                    variableKeyMap[selectedVariable1]["full_label"].toLowerCase()
+                }</b>`,
+                y: 0.98,
+                x: 0.5,
+                xanchor: 'center',
+                yanchor: 'top',
+                font: {
+                    size: 20,
+                    family: 'Arial, sans-serif',
+                    color: theme.plotColors.title_color,
+                }
+            },
+            xaxis: {
+                showticklabels: true,
+                color: theme.plotColors.xaxis_color,
+                gridcolor: theme.plotColors.xaxis_grid_color,
+                title: {
+                    text: `${variableKeyMap[selectedVariable1]["full_label"]}`,
+                },
+                dtick: 1,
+            },
+            yaxis: {
+                color: theme.plotColors.yaxis_color,
+                gridcolor: theme.plotColors.yaxis_grid_color,
+                title: {
+                    text: "Nombre d'accidents",
+                },
+                //dtick: 1,
+            },
+            showlegend: false,
+            legend: {
+                font: {
+                    color: theme.plotColors.legend_text_color,
+                },
+            }
+        }
+        // When modality labels are too long
+        const varsWithLegend = [
+            'obs', 'obsm', 'manv', 'trajet', 'atm', 'lum', 'mois'
+        ]
+        if(varsWithLegend.includes(selectedVariable1)){
+            out.xaxis.showticklabels = false
+            out.showlegend = true
+        }
+        return(out)
+    }, [selectedVar1ValLabels, selectedVar1ValCounts, theme])
+
     /**
-     * 
-     * @param {Array} uniqueYears 
-     * @returns 
+     * Function used to build labels on year slider.
+     * @param {Array} uniqueYears Array of ordered unique years.
+     * @returns Array of marker objects for MUI slider.
      */
     function buildSliderMarks(uniqueYears){
         let out = []
@@ -364,11 +395,12 @@ export default function CharacteristicsPage({uniqueYears,
                 )
             else if(filterMap.size > 0 & idxFilterSet.size === 0)
                 selectedYearSubsetIdx = idxFilterSet
-            else
+            else{
                 selectedYearSubsetIdx = getIndexesSet(
                     accidentData["an"],
                     selectedYearsSet
                 ).intersection(idxFilterSet)
+            }
             let out = []
             let var1Indexes = getIndexesCategoricalSet(
                 accidentData,
@@ -376,49 +408,120 @@ export default function CharacteristicsPage({uniqueYears,
                 selectedVariable1,
                 selectedYearSubsetIdx
             )
+            //console.log(`var1Indexes len: ${var1Indexes.size}`)
             //console.log(`v1: ${[...var1Indexes.entries()]}`)
             if(selectedVariable1 !== selectedVariable2){
                 //let rowNb = 0
                 //let colNb = 0
                 let plotIdx = 0
-                let debug_plot_col = [0, 1, 0, 1]
-                let debug_plot_row = [0, 0, 1, 1]
-                // Calc col positions
-                for(const [k1, v1] of var1Indexes){
-                    let var2Indexes = getIndexesCategorical(
-                            accidentData,
-                            variableKeyMap,
-                            selectedVariable2,
-                            selectedYearSubsetIdx.intersection(v1)
-                    )
-                    //console.log(`v2: ${[...var2Indexes.entries()]}`)
-                    let labels = []
-                    let values = []
-                    for(const [k2, v2] of var2Indexes){
-                        labels.push(k2)
-                        values.push(v2.length)
-                    }
-                    //console.log(`labels: ${labels}, values: ${values}`)
-                    out.push({
-                            labels: labels,
-                            values: values,
-                            name: k1,
-                            text: k1,
-                            textposition: 'inside',
-                            hovertemplate: "Label: %{label}<br>"+
-                                           "value: %{value}",
-                            hole: .6,
-                            type: "pie",
-                            domain: {
-                                column: debug_plot_col[plotIdx],
-                                row: debug_plot_row[plotIdx]
-                            }
-                        })
-                    //console.log(`var: ${k1}, col: ${debug_plot_col[plotIdx]}, row: ${debug_plot_row[plotIdx]}`)
-                    plotIdx ++
+                let plotPoseCol
+                let plotPoseRow
+                console.log(`pie trace switch val: ${selectedVariable1}`)
+                switch(selectedVariable1){
+                    case "age":
+                        plotPoseCol = [0, 1, 0, 1]
+                        plotPoseRow = [0, 0, 1, 1]
+                        break;
+                    case "atm":
+                        plotPoseCol = [0, 1, 2, 3, 0, 1, 2, 3, 0, 1]
+                        plotPoseRow = [0, 0, 0, 0, 1, 1, 1, 1, 2, 2]
+                        break;
+                    case "mois":
+                        plotPoseCol = [3, 0, 2, 2, 1, 3, 0, 1, 2, 1, 3, 0]
+                        plotPoseRow = [1, 1, 1, 2, 0, 2, 2, 2, 0, 1, 0, 0]
+                        break;
+                    case "jour":
+                        plotPoseCol = [2 ,1, 0, 1, 0, 3, 2]
+                        plotPoseRow = [0 ,1, 0, 0, 1, 0, 1]
+                        break;
+                    case "lum":
+                        plotPoseCol = [0 ,1, 2, 3, 0]
+                        plotPoseRow = [0 ,1, 0, 0, 1]
+                        break;
+                    case "grav":
+                        plotPoseCol = [0 ,1, 0, 1]
+                        plotPoseRow = [0 ,1, 1, 0]
+                        break;
+                    case "trajet":
+                        plotPoseCol = [0, 1, 2, 3, 0, 1, 2]
+                        plotPoseRow = [0, 0, 0, 0, 1, 1, 1]
+                        break;
+                    case "secuexist":
+                        plotPoseCol = [0, 1, 0, 1]
+                        plotPoseRow = [0, 0, 1, 1]
+                        break;
+                    case "obs":
+                        plotPoseCol = [
+                            0, 1, 2, 3, 4, 5, 
+                            0, 1, 2, 3, 4, 5,
+                            0, 1, 2, 3, 4, 5,
+                            0
+                        ]
+                        plotPoseRow = [
+                            0, 0, 0, 0, 0, 0,
+                            1, 1, 1, 1, 1, 1,
+                            2, 2, 2, 2, 2, 2,
+                            3
+                        ]
+                        break;
+                    case "obsm":
+                        plotPoseCol = [0, 1, 2, 3, 0, 1, 2, 3]
+                        plotPoseRow = [0, 0, 0, 0, 1, 1, 1, 1]
+                        break;
+                    case "manv":
+                        plotPoseCol = [
+                            0, 1, 2, 3, 4, 5, 
+                            0, 1, 2, 3, 4, 5,
+                            0, 1, 2, 3, 4, 5,
+                            0, 1, 2, 3, 4, 5
+                        ]
+                        plotPoseRow = [
+                            0, 0, 0, 0, 0, 0,
+                            1, 1, 1, 1, 1, 1, 
+                            2, 2, 2, 2, 2, 2,
+                            3, 3, 3, 3, 3, 3
+                        ]
+                        break;
+                    default:
+                        plotPoseCol = [0, 1, 0, 1]
+                        plotPoseRow = [0, 0, 1, 1]
                 }
+                    for(const [k1, v1] of var1Indexes){
+                        let var2Indexes = getIndexesCategorical(
+                                accidentData,
+                                variableKeyMap,
+                                selectedVariable2,
+                                selectedYearSubsetIdx.intersection(v1)
+                        )
+                        //console.log(`var2Indexes len: ${var2Indexes.size}`)
+                        //console.log(`v2: ${[...var2Indexes.entries()]}`)
+                        let labels = []
+                        let values = []
+                        for(const [k2, v2] of var2Indexes){
+                            labels.push(k2)
+                            values.push(v2.length)
+                        }
+                        //console.log(`labels: ${labels}, values: ${values}`)
+                        out.push({
+                                labels: labels,
+                                values: values,
+                                name: k1,
+                                text: k1,
+                                textposition: 'inside',
+                                hovertemplate: "Label: %{label}<br>"+
+                                               "Nb accidents: %{value}",
+                                hole: .6,
+                                type: "pie",
+                                domain: {
+                                    column: plotPoseCol[plotIdx],
+                                    row: plotPoseRow[plotIdx]
+                                }
+                            })
+                        //console.log(`var: ${k1}, col: ${debug_plot_col[plotIdx]}, row: ${debug_plot_row[plotIdx]}`)
+                        plotIdx ++
+                    }
             }
-            else{
+            else{/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 out.push({
                     labels: selectedVar1ValLabels,
                     values: selectedVar1ValCounts,
@@ -489,16 +592,16 @@ export default function CharacteristicsPage({uniqueYears,
             plotLabels = Object.keys(variableKeyMap[selectedVariable1]["cat_group"])
         }
         // Scale grid to 16:9 + extra
-        let scalingFactor = Math.sqrt(plotLabels.length / (16*9))
-        let nbCols = Math.floor(scalingFactor * 16)
-        let nbRows = Math.floor(scalingFactor * 9)
+        //let scalingFactor = Math.sqrt(plotLabels.length / (16*9))
+        //let nbCols = Math.floor(scalingFactor * 16)
+        //let nbRows = Math.floor(scalingFactor * 9)
         //let remainder = (nbCols % 1) + (nbRows % 1)
-        let missing = plotLabels.length - (
-            Math.floor(nbCols) * Math.floor(nbRows)
-        )
-        if(missing > 0){
-            nbRows ++
-        }
+        //let missing = plotLabels.length - (
+        //    Math.floor(nbCols) * Math.floor(nbRows)
+        //)
+        //if(missing > 0){
+        //    nbRows ++
+        //}
         let annotations = []
         //let colIdx = 0
         //let rowIdx = 0
@@ -507,33 +610,183 @@ export default function CharacteristicsPage({uniqueYears,
         //let colPos = distributeValues(0, 1, nbCols)
         //let rowPos = distributeValues(0, 1, nbRows)
         //let posScaleVal = 1.2
-        function calcLabelPos(plotLabels){
-            // TODO: Make this procedural
-            let xPos
-            let yPos 
-            switch(selectedVariable1){
-                case "age":
-                    xPos = [0.19, 0.815, 0.185, 0.805]
-                    yPos = [0.79, 0.79, 0.22, 0.22]
-                    break;
-                default:
-                    xPos = [0.19, 0.815, 0.185, 0.805]
-                    yPos = [0.79, 0.79, 0.22, 0.22]
-            }
-            return([xPos, yPos])
+        //function calcLabelPos(plotLabels){
+        // TODO: Make this procedural
+        let xPos
+        let yPos
+        let nbCols
+        let nbRows
+        let inCircleFontSize
+        let inCircleWeight
+        console.log(`Selected variable: ${selectedVariable1}`)
+        switch(selectedVariable1){
+            case "atm":
+                xPos = [
+                    0.091, 0.372, 0.627, 0.908,
+                    0.088, 0.372, 0.628, 0.908,
+                    0.098, 0.373
+                ]
+                yPos = [
+                    0.865, 0.882, 0.88, 0.875,
+                    0.5, 0.5, 0.5, 0.5,
+                    0.135, 0.13
+                ]
+                nbCols = 4
+                nbRows = 3
+                inCircleFontSize = [12,10,8,5]
+                break;
+            case "mois":
+                xPos = [
+                    0.9, 0.1, 0.627, 0.628,
+                    0.372, 0.92, 0.078, 0.372,
+                    0.628, 0.372, 0.9, 0.09
+                ]
+                yPos = [
+                    0.5, 0.5, 0.5, 0.135,
+                    0.87, 0.135, 0.135, 0.135,
+                    0.87, 0.5, 0.87, 0.87
+                ]
+                nbCols = 4
+                nbRows = 3
+                inCircleFontSize = 15
+                break;
+            case "jour":
+                xPos = [
+                    0.628, 0.372, 0.087, 0.372,
+                    0.066, 0.915, 0.63
+                ]
+                yPos = [
+                    0.8, 0.21, 0.8, 0.8,
+                    0.21, 0.8, 0.21
+                ]
+                nbCols = 4
+                nbRows = 2
+                inCircleFontSize = 25
+                break;
+            case "lum":
+                xPos = [0.112, 0.5, 0.887, 0.5, 0.112]
+                yPos = [0.79, 0.18, 0.835, 0.86, 0.126]
+                nbCols = 3
+                nbRows = 2
+                inCircleFontSize = 20
+                break;
+            case "grav":
+                xPos = [0.19, 0.782, 0.183, 0.795]
+                yPos = [0.79, 0.21, 0.2, 0.82]
+                nbCols = 2
+                nbRows = 2
+                inCircleFontSize = 20
+                break;
+            case "sexe":
+                xPos = [0.13, 0.86]
+                yPos = [0.5, 0.5]
+                nbCols = 2
+                nbRows = 1
+                inCircleFontSize = 50
+                break;
+            case "age":
+                xPos = [0.19, 0.81, 0.188, 0.815]
+                yPos = [0.82, 0.82, 0.19, 0.19]
+                nbCols = 2
+                nbRows = 2
+                inCircleFontSize = 20
+                break;
+            case "trajet":
+                xPos = [
+                    0.07, 0.373, 0.63, 0.93,
+                    0.07, 0.372, 0.63, -1
+                ]
+                yPos = [
+                    0.82, 0.82, 0.82, 0.82,
+                    0.19, 0.19, 0.21, -1
+                ]
+                nbCols = 4
+                nbRows = 2
+                inCircleFontSize = 20
+                break;
+            case "secuexist":
+                xPos = [
+                    0.187, 0.8,
+                    0.2, 0.805,-1
+                ]
+                yPos = [
+                    0.79, 0.82,
+                    0.19, 0.19,-1
+                ]
+                nbCols = 2
+                nbRows = 2
+                inCircleFontSize = 20
+                break;
+            case "obs":
+                xPos = [
+                    0.051, 0.212, 0.415, 0.585, 0.775, 0.945,
+                    0.054, 0.219, 0.415, 0.585, 0.775, 0.942,
+                    0.051, 0.225, 0.415, 0.585, 0.777, 0.949,
+                    0.053
+                ]
+                yPos = [
+                    0.9, 0.94, 0.9, 0.91, 0.91, 0.91,
+                    0.63, 0.63, 0.63, 0.63, 0.63, 0.63,
+                    0.37, 0.38, 0.375, 0.39, 0.37, 0.38,
+                    0.095
+                ]
+                nbCols = 6
+                nbRows = 4
+                inCircleFontSize = 9
+                break;
+            case "obsm":
+                xPos = [
+                    0.085, 0.373, 0.67, 0.92,
+                    0.063, 0.373, 0.63, 0.93,
+                ]
+                yPos = [
+                    0.79, 0.79,  0.79, 0.82,
+                    0.19, 0.19, 0.21, 0.19
+                ]
+                nbCols = 4
+                nbRows = 2
+                inCircleFontSize = 20
+                break;
+            case "manv":
+                xPos = [
+                    0.054, 0.217, 0.415, 0.585, 0.779, 0.95,
+                    0.048, 0.223, 0.415, 0.585, 0.779, 0.946,
+                    0.057, 0.223, 0.415, 0.585, 0.774, 0.945,
+                    0.053, 0.221, 0.415, 0.585,
+                    -1, -1, -1, -1, -1, -1
+                ]
+                yPos = [
+                    0.9, 0.94, 0.915, 0.91, 0.91, 0.91,
+                    0.63, 0.63, 0.63, 0.63, 0.63, 0.63,
+                    0.37, 0.38, 0.375, 0.37, 0.37, 0.37,
+                    0.104, 0.08, 0.088, 0.095,
+                    -1, -1, -1, -1, -1, -1
+                ]
+                nbCols = 6
+                nbRows = 4
+                inCircleFontSize = 9
+                break;
+            default:
+                xPos = [0.19, 0.815, 0.185, 0.805]
+                yPos = [0.79, 0.79, 0.22, 0.22]
+                nbCols = 2
+                nbRows = 2
+                inCircleFontSize = 20
         }
-        let labelPos = calcLabelPos(plotLabels)
+        //return([xPos, yPos])
+        //}
+        //let labelPos = calcLabelPos(plotLabels)
         for(let idx=0;idx<plotLabels.length;idx++){
             annotations.push(
                 {
                   font: {
-                    //size: 0,
+                    size: inCircleFontSize,
                     color: theme.plotColors.title_color
                   },
                   showarrow: false,
-                  text: plotLabels[idx],
-                  x: labelPos[0][idx],
-                  y: labelPos[1][idx]
+                  text: insertLineBreaks(plotLabels[idx], 10),
+                  x: xPos[idx]/*labelPos[0][idx]*/,
+                  y: yPos[idx]/*labelPos[1][idx]*/
                   //x: colPos[idx % nbCols] * posScaleVal,
                   //y: (1 - rowPos[Math.floor(idx / nbCols)]) * posScaleVal
                 }
@@ -555,7 +808,7 @@ export default function CharacteristicsPage({uniqueYears,
                 paper_bgcolor: theme.plotColors.paper_bgcolor,
                 legend:{
                     title: {
-                        text: variableKeyMap[selectedVariable1]["full_label"],
+                        text: variableKeyMap[selectedVariable2]["full_label"],
                     },
                     font: {
                         color: theme.plotColors.legend_text_color,
@@ -589,11 +842,13 @@ export default function CharacteristicsPage({uniqueYears,
                 annotations: annotations,
                 grid: {rows: nbRows, columns: nbCols}
         })
-    }, [variableKeyMap, selectedVariable1, selectedVariable2, idxFilterSet])
+    }, [variableKeyMap, selectedVariable1, selectedVariable2, idxFilterSet, theme])
 
     return(
             <div id="temporalPageRootDiv">
-                <h1>Description des accidents et état/situation des usagers mis en cause</h1>
+                {
+                //<h1>Description des accidents et état/situation des usagers mis en cause</h1>
+                }
                 <div id="mainTemporalGraphDiv">
                     <span id="topGraphSpan">
                         <div>
@@ -608,48 +863,7 @@ export default function CharacteristicsPage({uniqueYears,
                             }
                             <Plot
                             data={barPlotTraces}
-                            layout={ {
-                                //width: 320,
-                                //height: 240,
-                                plot_bgcolor: theme.plotColors.plot_bgcolor,
-                                paper_bgcolor: theme.plotColors.paper_bgcolor,
-                                margin: {
-                                        t: 30,
-                                        b: 35,
-                                        r: 10,
-                                        l: 50,
-                                    },
-                                title: {
-                                    text: `<b>Nombre d'accident par ${
-                                        variableKeyMap[selectedVariable1]["full_label"].toLowerCase()
-                                    }</b>`,
-                                    y: 0.98,
-                                    x: 0.5,
-                                    xanchor: 'center',
-                                    yanchor: 'top',
-                                    font: {
-                                        size: 20,
-                                        family: 'Arial, sans-serif',
-                                        color: theme.plotColors.title_color,
-                                    }
-                                },
-                                xaxis: {
-                                    color: theme.plotColors.xaxis_color,
-                                    gridcolor: theme.plotColors.xaxis_grid_color,
-                                    title: {
-                                        text: `${variableKeyMap[selectedVariable1]["full_label"]}`,
-                                    },
-                                    dtick: 1,
-                                },
-                                yaxis: {
-                                    color: theme.plotColors.yaxis_color,
-                                    gridcolor: theme.plotColors.yaxis_grid_color,
-                                    title: {
-                                        text: "Nombre d'accidents",
-                                    },
-                                    //dtick: 1,
-                                }
-                            } }
+                            layout={barPlotLayout}
                         />
                         </div>
                     </span>
@@ -673,10 +887,11 @@ export default function CharacteristicsPage({uniqueYears,
                         <div id="varDropdownDiv">
                             <span id='varDropdownSpan'>
                                 <div>
-                                    <InputLabel>
+                                    <InputLabel className='varLabel'>
                                         Variable 1
                                     </InputLabel>
                                     <Select
+                                        className='varSelectDropdown'
                                         size="small"
                                         value={selectedVariable1}
                                         onChange={
@@ -702,10 +917,11 @@ export default function CharacteristicsPage({uniqueYears,
                                     </Select>
                                 </div>
                                 <div>
-                                    <InputLabel>
+                                    <InputLabel className='varLabel'>
                                         Variable 2
                                     </InputLabel>
                                     <Select
+                                        className='varSelectDropdown'
                                         size="small"
                                         value={selectedVariable2}
                                         onChange={

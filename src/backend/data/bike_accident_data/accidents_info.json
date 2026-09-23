@@ -152,6 +152,7 @@
                "convert_to": "str",
                "description": "Date de l'accident",
                "full_label": "Date de l'accident",
+               "short_label": "Date",
                "load_as": "str"
           },
           "dep": {
@@ -346,7 +347,17 @@
                "convert_to": "str",
                "description": "Jour de l'accident",
                "full_label": "Jour de l'accident",
-               "load_as": "str"
+               "short_label": "Jour",
+               "load_as": "str",
+               "keys": {
+                 "mercredi": "Mercredi",
+                 "samedi": "Samedi",
+                 "lundi": "Lundi",
+                 "mardi": "Mardi",
+                 "vendredi": "Vendredi",
+                 "jeudi": "Jeudi",
+                 "dimanche": "Dimanche"
+               }
           },
           "larrout": {
                "convert_to": "float",
@@ -476,7 +487,21 @@
                "convert_to": "str",
                "description": "Mois de l'accident",
                "full_label": "Mois de l'accident",
-               "load_as": "str"
+               "load_as": "str",
+               "keys": {
+                 "août": "Août",
+                 "mai": "Mai",
+                 "juillet": "Juillet",
+                 "novembre": "Novembre",
+                 "février": "Février",
+                 "décembre": "Décembre",
+                 "septembre": "Septembre",
+                 "octobre": "Octobre",
+                 "mars": "Mars",
+                 "juin": "Juin",
+                 "avril": "Avril",
+                 "janvier": "Janvier"
+               }
           },
           "nbv": {
                "convert_to": "int",

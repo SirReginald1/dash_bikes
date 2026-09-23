@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useEffect, useRef, useMemo } from 'react'
 import { useTheme } from "@mui/material/styles"
 //import { colors } from '@mui/material'
 //import { FormControl, Select, MenuItem } from "@mui/material"
-import Plot from 'react-plotly.js'
-import { getIndexContinuBracketSet, getIndexesSet, concatIdxMap, extractValues, getIndexes } from '../utils.js'
+//import Plot from 'react-plotly.js'
+import { concatIdxMap, getIndexes } from '../utils.js'
 //import FilterSelection from '../components/FilterSelection.jsx'
 import "./MapScatterPage.css"
 
@@ -19,95 +19,30 @@ export default function MapScatterPage({filterBarIsOpen,
                                         idxFilterMap,
                                         themeMode}){
 
-    // DEBUG
-    /*
-    let accidentDataTemp ={
-        an:     [2025,      2026,   2024,   2026,   2023,   2026,   2025,      2026,   2024,   2026,   2023,   2026,    2024],
-        grav:   [2,         2,      2,      3,      1,      2,      2,         2,      2,      3,      1,      2,       1],
-        mois:   ["juillet", "juin", "mai", "avril", "juin", "juin", "juillet", "juin", "mai", "avril", "juin", "juin", "septembre"],
-        age:    [20,        20,     30,     30,     30,     30,     30,         30,     25,    26,      65,     68,     65],
-        lon:    [3,         3.1,    3.2,    3.3,    3.4,    3.5,    3.6,        3.7,    3.8,   3.9,     4,      4.1,    4.2],
-        lat:    [45,        45.1,   45.2,   45.3,   45.4,   45.5,   45.6,       45.7,   45.8,  45.9,    46,     46.1,   46.2],
-    }
 
-    let variableKeyMapTemp = {
-        grav: {
-            keys: {"1": "Indemne", "2": "Tué", "3": "Blessé hospitalisé", "4": "Blessé léger"},
-            full_label: "Gravité de blessure de l'usager",
-            short_label: "Gravité",
-            description: "Gravité de l'accident",
-        },
-        age:{
-            description: "Age de l'usager",
-            full_label: "Age de l'usager",
-            short_label: "Age",
-            load_as: "int",
-            cat_group: {
-                    "Moins de 18ans": [0, 17],
-                    "Entre 18 et 30 ans": [18, 29],
-                    "Entre 30 et 50 ans": [30, 49],
-                    "Plus de 50 ans": [50, 9999]
-               }
-        }
-    }
-    */
-    //
     const theme = useTheme();
-    
-    //const [filterMapChangeFlag, setFilterMapChangeFlag] = useState(0);
-    
-    //const [colorVarSelected, setColorVarSelected] = useState('None');
 
     const filterMap = useRef(new Map());
 
     const plotRef = useRef(null);
-    /*
-    const varsExcludedFromSelection = ['date', 'hrmn', 'dep', 'lat', 'lon']
-
-    const colorSelectionComp = 
-        <div id='rootDropdownDiv'>
-                    <h4 id='colorSelectTitle'>
-                        Variable color selection
-                    </h4>
-                    <FormControl id='colorVarSelectFormControl'>
-                        <Select
-                            id='colorVarSelect'
-                            value={colorVarSelected}
-                            onChange={(event) => setColorVarSelected(event.target.value)}
-                        >
-                            {[
-                                <MenuItem
-                                    className="navbarMenuItem"
-                                    key='None'
-                                    value='None'
-                                >
-                                    None
-                                </MenuItem>
-                            ].concat(Object.keys(variableKeyMap).map((key, idx) => {
-                                if(!varsExcludedFromSelection.includes(key)){
-                                    return(
-                                        <MenuItem
-                                            className="navbarMenuItem"
-                                            key={key}
-                                            value={key}
-                                        >
-                                            {variableKeyMap[key]['full_label']}
-                                        </MenuItem>
-                                    )
-                                }
-                            }))}
-                        </Select>
-                    </FormControl>
-                </div>
-    */
+    
     let mapTextArray = []
     for(let i=0;i<accidentData.lat.length;i++){
-        // TODO: Make string building a loop
+        // TODO: Make str building a loop to allow user to select what variables to appear
         mapTextArray.push(
-            `Latitude: ${accidentData['lat'][i]}<br>` +
-            `Longitude: ${accidentData['lon'][i]}<br>` +
-            `${variableKeyMap['grav']['full_label']}: ${variableKeyMap['grav']['keys'][`${accidentData['grav'][i]}`]}<br>` +
-            `${variableKeyMap['age']['full_label']}: ${accidentData['age'][i]}<br>`
+            `<b>Latitude:</b> ${accidentData['lat'][i]}<br>` +
+            `<b>Longitude:</b> ${accidentData['lon'][i]}<br>` +
+            `<b>${variableKeyMap['grav']['full_label']}:</b> ${variableKeyMap['grav']['keys'][`${accidentData['grav'][i]}`]}<br>` +
+            `<b>${variableKeyMap['age']['full_label']}:</b> ${accidentData['age'][i]}<br>` +
+            `<b>${variableKeyMap['sexe']['full_label']}:</b> ${variableKeyMap['sexe']['keys'][accidentData['sexe'][i]]}<br>` +
+            `<b>${variableKeyMap['date']['short_label']}:</b> ${accidentData['date'][i]}<br>` +
+            `<b>${variableKeyMap['jour']['short_label']}:</b> ${variableKeyMap['jour']['keys'][accidentData['jour'][i]]}<br>` +
+            `<b>${variableKeyMap['trajet']['full_label']}:</b> ${variableKeyMap['trajet']['keys'][accidentData['trajet'][i]]}<br>` +
+            `<b>${variableKeyMap['lum']['full_label']}:</b> ${variableKeyMap['lum']['keys'][accidentData['lum'][i]]}<br>` +
+            `<b>${variableKeyMap['atm']['full_label']}:</b> ${variableKeyMap['atm']['keys'][accidentData['atm'][i]]}<br>` +
+            `<b>${variableKeyMap['obs']['full_label']}:</b> ${variableKeyMap['obs']['keys'][accidentData['obs'][i]]}<br>` +
+            `<b>${variableKeyMap['obsm']['full_label']}:</b> ${variableKeyMap['obsm']['keys'][accidentData['obsm'][i]]}<br>` +
+            `<b>${variableKeyMap['secuexist']['full_label']}:</b> ${variableKeyMap['secuexist']['keys'][accidentData['secuexist'][i]]}<br>`
         )
     }
 
@@ -285,7 +220,7 @@ export default function MapScatterPage({filterBarIsOpen,
                             size: 8,
                             color: accidentData[colorVarSelected],
                             reversescale: true,
-                            colorscale: [[0,'rgb(5, 10, 172)'],[0.35,'rgb(40, 60, 190)'],[0.5,'rgb(70, 100, 245)'], [0.6,'rgb(90, 120, 245)'],[0.7,'rgb(106, 137, 247)'],[1,'rgb(220, 220, 220)']],
+                            colorscale: theme.plotColors.scatterMapColorScale,
                             colorbar: {
                                 //thickness: 10,
                                 //outlinecolor: 'white',
@@ -334,131 +269,11 @@ export default function MapScatterPage({filterBarIsOpen,
         Plotly.react(plotRef.current, traces, layout)
     }, [traces, colorVarSelected, filterBarIsOpen])
     
-    // TODO: Try to clean up logic for this function 
-    /**
-     * Function that is passed to each selector element to set that map
-     * of selected indexes.
-     * @param {String} variable The variable label as it appears in the data
-     *  object.
-     * @param {Array[String | Number]} values Array containing all the selected
-     *  values.
-     * @param {Number} includeValues A value to include in every selection.
-     *  Used to include "null" values. Default is undefined.
-     *//*
-    function setFilterMap(variable, values, includeValues = undefined){
-        // Var is categorical
-        if(Object.hasOwn(variableKeyMap[variable], 'keys')){
-            let valueSet = new Set()
-            for(const paire of values){
-                // Try to clean up this logic
-                if(values instanceof Array){
-                    // Allow this to work for strings
-                    if(Number.isNaN(Number(paire[0]))){
-                        valueSet.add(paire[0])    
-                    }
-                    else{
-                        valueSet.add(Number(paire[0]))
-                    }
-                }
-                else{
-                    valueSet.add(paire)
-                }
-            }
-            if(valueSet.size > 0){
-                filterMap.current.set(
-                    variable,
-                    getIndexesSet(accidentData[variable], valueSet)
-                )
-            }
-            else{ // If none or all are selected
-                filterMap.current.delete(variable)
-            }
-        }
-        else{
-            // If variable set to all
-            if(values === 'all'){
-                filterMap.current.delete(variable)
-            }
-            else{
-                filterMap.current.set(
-                    variable,
-                    getIndexContinuBracketSet(
-                        accidentData[variable],
-                        values,
-                        includeValues
-                        //variableKeyMap[variable]["null_replace_val"]
-                    )
-                )
-            }
-        }
-        //setFilterMapFunction(filterMap)
-        //console.log(`map size: ${filterMap.current.size}`)
-        //console.log(`map set to: ${[...filterMap.current.entries()]}`)
-        //for(const [k, v] of filterMap.current.entries()){
-        //    console.log(`key: ${k}`)
-        //    console.log(`set: ${[...v]}`)
-        //}
-        //console.log(`Flag change initial. val: ${filterMapChangeFlag}`)
-        setFilterMapChangeFlag(filterMapChangeFlag == 0 ? 1 : 0)
-        //console.log(`Flag change after switch. val: ${filterMapChangeFlag}`)
-
-    }
-    */
     return(
         <div id='rootDiv'>
-            {/*
-            <span id='contentSpan'>
-                <div id='rootDropdownDiv'>
-                    <h4 id='colorSelectTitle'>
-                        Variable color selection
-                    </h4>
-                    <FormControl id='colorVarSelectFormControl'>
-                        <Select
-                            id='colorVarSelect'
-                            value={colorVarSelected}
-                            onChange={(event) => setColorVarSelected(event.target.value)}
-                        >
-                            {[
-                                <MenuItem
-                                    className="navbarMenuItem"
-                                    key='None'
-                                    value='None'
-                                >
-                                    None
-                                </MenuItem>
-                            ].concat(Object.keys(variableKeyMap).map((key, idx) => {
-                                if(!varsExcludedFromSelection.includes(key)){
-                                    return(
-                                        <MenuItem
-                                            className="navbarMenuItem"
-                                            key={key}
-                                            value={key}
-                                        >
-                                            {variableKeyMap[key]['full_label']}
-                                        </MenuItem>
-                                    )
-                                }
-                            }))}
-                        </Select>
-                    </FormControl>
-                    <h4 id='filterSelectionTitle'>
-                        Filter selection
-                    </h4>
-                    <FilterSelection
-                        accidentData={accidentData}
-                        variableKeyMap={variableKeyMap}
-                        //filterMap={filterMap}
-                        setFilterMapFunction={setFilterMap}
-                        excludedVars={varsExcludedFromSelection}
-                    />
-                </div>
-                */
-                }
                 <div id='mapDiv'>
                     <div ref={plotRef} id='map'/>
                 </div>
-            {//</div></span>
-            }
         </div>
     )
 }

@@ -10,6 +10,10 @@
   width: 100%;
 }
 
+.sectionBlock {
+  margin-bottom: 5%;
+}
+
 .sectionTitleDiv:hover{
   background-color: rgba(220, 14, 14, 0.308);
   cursor: pointer;
@@ -24,7 +28,7 @@
 }
 
 .sectionTitleSpan:focus {
-  outline: red;
+  outline: var(--sidebarTitleColor);
 }
 
 .pageSelectionBtn {

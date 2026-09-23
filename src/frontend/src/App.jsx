@@ -1,16 +1,13 @@
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { ThemeProvider,
          CssBaseline,
          GlobalStyles } from '@mui/material';
 import { lightTheme, darkTheme } from './themes.jsx'
 import { getIndexes,
-         concatIdxMap,
          depToRegCodeMap,
          depsInRegCodeMap,
          getIndexContinuBracketSet,
          getIndexesSet,
-         filterByValuesSet,
-         extractIdxFromFilterMap, 
          concatIdxMapSet} from './utils.js'
 import Navbar from './components/NavigationBar.jsx'
 import Sidebar from './components/SideBarMenu.jsx'
@@ -28,9 +25,9 @@ function App() {
 
   const [metadata, setMetadata] = useState();
 
-  const [regMapGeojson, setRegMapGeojson] = useState();
+  //const [regMapGeojson, setRegMapGeojson] = useState();
 
-  const [depMapGeojson, setDepMapGeojson] = useState();
+  //const [depMapGeojson, setDepMapGeojson] = useState();
 
   const [geojsonData, setGeojsonData] = useState(new Map());
 
@@ -79,7 +76,7 @@ function App() {
 
   //const [filterMapChangeFlag, setFilterMapChangeFlag] = useState(false);
 
-  const [filterBarIsOpen, setFilterBarIsOpen] = useState(0);
+  const [filterBarIsOpen, setFilterBarIsOpen] = useState(false);
 
   // TODO: Remove idxFilterMap as filter map already calculates indexes
   const idxFilterMap = useMemo(() => {

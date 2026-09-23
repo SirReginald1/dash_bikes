@@ -2,7 +2,8 @@
   "accidentVelo": {
     "date": {
       "description": "Date de l'accident",
-      "full_label": "Date de l'accident"
+      "full_label": "Date de l'accident",
+      "short_label": "Date"
     },
     "an": {
       "description": "Année de l'accident",
@@ -12,31 +13,32 @@
       "description": "Mois de l'accident",
       "full_label": "Mois de l'accident",
       "keys": {
-        "août": "août",
-        "mai": "mai",
-        "juillet": "juillet",
-        "novembre": "novembre",
-        "février": "février",
-        "décembre": "décembre",
-        "septembre": "septembre",
-        "octobre": "octobre",
-        "mars": "mars",
-        "juin": "juin",
-        "avril": "avril",
-        "janvier": "janvier"
+        "août": "Août",
+        "mai": "Mai",
+        "juillet": "Juillet",
+        "novembre": "Novembre",
+        "février": "Février",
+        "décembre": "Décembre",
+        "septembre": "Septembre",
+        "octobre": "Octobre",
+        "mars": "Mars",
+        "juin": "Juin",
+        "avril": "Avril",
+        "janvier": "Janvier"
       }
     },
     "jour": {
       "description": "Jour de l'accident",
       "full_label": "Jour de l'accident",
+      "short_label": "Jour",
       "keys": {
-        "mercredi": "mercredi",
-        "samedi": "samedi",
-        "lundi": "lundi",
-        "mardi": "mardi",
-        "vendredi": "vendredi",
-        "jeudi": "jeudi",
-        "dimanche": "dimanche"
+        "mercredi": "Mercredi",
+        "samedi": "Samedi",
+        "lundi": "Lundi",
+        "mardi": "Mardi",
+        "vendredi": "Vendredi",
+        "jeudi": "Jeudi",
+        "dimanche": "Dimanche"
       }
     },
     "hrmn": {
