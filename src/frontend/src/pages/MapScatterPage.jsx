@@ -51,7 +51,7 @@ export default function MapScatterPage({filterBarIsOpen,
             return({
                 //autosize: true,
                 map: {
-                    style: 'open-street-map',
+                    style: theme.palette.mode === 'light' ? 'open-street-map' : 'dark',
                     center: { lat: 48, lon: 3 },
                     zoom: 5.5
                 },
@@ -105,7 +105,7 @@ export default function MapScatterPage({filterBarIsOpen,
                 },
             })
         }
-    }, [themeMode, colorVarSelected])
+    }, [themeMode, colorVarSelected, theme])
 
     // Build traces // TODO: Simplify this nested mess
     const traces = useMemo(() => {
@@ -267,7 +267,7 @@ export default function MapScatterPage({filterBarIsOpen,
     // Update traces when filters change
     useEffect(() => {
         Plotly.react(plotRef.current, traces, layout)
-    }, [traces, colorVarSelected, filterBarIsOpen])
+    }, [traces, colorVarSelected, filterBarIsOpen, theme])
     
     return(
         <div id='rootDiv'>

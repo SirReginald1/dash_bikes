@@ -35,7 +35,8 @@
 .mainPageRootDiv {
     margin-top: var(--navBarHeight);
     /*height: 100hv;*/
-    /*background-color: blueviolet;*/
+    /*background: #090979;*/
+    background: var(--mainContentBackground);
 }
 
 #mainContentRoot {

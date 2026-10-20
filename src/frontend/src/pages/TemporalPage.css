@@ -2,6 +2,38 @@
     display: flex;
     margin-top: 50px;
     margin-bottom: 50px;
+    gap: 100px;
+    width: 100%;
+    justify-content: center;
+}
+
+.keyNumberTextSpan {
+    display: block;
+}
+
+g.legend rect.bg{
+    border-radius: 30px !important;
+    overflow: hidden !important;
+    fill: var(--legendColor/*--blockHighlightcolor*/) !important;
+}
+
+#keyNumbersDiv {
+    display: flex;
+    width: 100%;
+    align-items: center;
+}
+
+.keyNumbersElementDiv {
+    display: grid;
+    background-color: var(--blockHighlightcolor);
+    border-radius: 30px;
+    overflow: hidden;
+    padding: 0.5% 1% 0.5% 1%;
+    box-shadow: 10px 10px 5px rgba(0, 0, 0, 0.3);
+    /*
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+    */
 }
 
 #temporalPageRootDiv {
@@ -13,21 +45,26 @@
     display: flex;
     align-items: center;
     gap: 50px;
-}
-
-.keyNumbersElementDiv {
-    display: grid;
-    /*
-    margin-left: 2.5%;
-    margin-right: 2.5%;
-    */
-}
-
-#keyNumbersParentSpan {
-    gap: 100px;
+    margin-bottom: 1%;
 }
 
 .keyNumberSpan {
     font-weight: bold;
     font-size: xx-large;
+}
+/*
+.plotDiv {
+    border-radius: 30px;
+    overflow: hidden;
+}
+*/
+/* Big plot */
+.plot-container.plotly > .user-select-none.svg-container {
+    border-radius: 30px;
+    overflow: hidden;
+    /*padding: 3px;*/
+    /* This section defines borders for all plots */
+    box-sizing: content-box;
+    border: var(--plotBorderColor);
+    box-shadow: 10px 10px 5px rgba(0, 0, 0, 0.3);
 }

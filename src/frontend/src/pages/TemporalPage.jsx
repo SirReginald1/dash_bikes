@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useTheme } from "@mui/material/styles"
-import Popover from '@mui/material/Popover';
+//import Popover from '@mui/material/Popover';
 import Plot from 'react-plotly.js'
 import { monthList,
          rollingAverage,
@@ -173,7 +173,6 @@ export default function TemporalPage({uniqueYears,
     //}, [])
 
     const monthPlotTraces = useMemo(() => {
-            console.log(`Load month plot.`)
             //let arrayLength = monthList.length// * uniqueYears.length
             //let labels = new Array(arrayLength)
             //let data = new Array(arrayLength)
@@ -242,8 +241,8 @@ export default function TemporalPage({uniqueYears,
                 paper_bgcolor: theme.plotColors.paper_bgcolor,
                 margin: {
                         t: 30,
-                        b: 45,
-                        r: 20,
+                        b: 55,
+                        r: 30,
                         l: 50,
                     },
                 title: {
@@ -264,6 +263,7 @@ export default function TemporalPage({uniqueYears,
                     title: {
                         text: 'Année',
                         xanchor: 'bottom',
+                        //standoff: -100,
                     },
                     dtick: 1,
                 },
@@ -512,7 +512,7 @@ export default function TemporalPage({uniqueYears,
                 paper_bgcolor: theme.plotColors.paper_bgcolor,
                 legend:{
                     title: {
-                        text: "Légande",
+                        text: "Légande",////////////////////////////////////////////////////////////////////////////////////////
                     },
                     font: {
                         color: theme.plotColors.legend_text_color,
@@ -650,7 +650,7 @@ export default function TemporalPage({uniqueYears,
             <div id="keyNumbersDiv">
                 <span id="keyNumbersParentSpan">
                     <div className='keyNumbersElementDiv'>
-                        <span>
+                        <span className='keyNumberTextSpan'>
                             Nombre d'accidents entre {selectedYears[0]} et {selectedYears[1]}:
                         </span>
                         <span 
@@ -661,6 +661,7 @@ export default function TemporalPage({uniqueYears,
                             onMouseLeave={handlePopoverClose}
                         >
                             {nbAccidentsSelectedYears}
+                            {/*
                             <Popover
                                 id="mouse-over-popover"
                                 sx={{ pointerEvents: 'none' }}
@@ -679,16 +680,17 @@ export default function TemporalPage({uniqueYears,
                             >
                                 Popover text
                             </Popover>
+                            */}
                         </span>
                     </div>
                     <div className='keyNumbersElementDiv'>
-                        <span>
+                        <span className='keyNumberTextSpan'>
                             Nombre de morts entre {selectedYears[0]} et {selectedYears[1]}:
                         </span>
                         <span className='keyNumberSpan'>
                             {nbDeathsSelectedYears}
                         </span>
-                        <span>
+                        <span className='keyNumberTextSpan'>
                             Représente {
                                 ((nbDeathsSelectedYears/
                                 nbAccidentsSelectedYears)*100).toFixed(2)
@@ -696,13 +698,13 @@ export default function TemporalPage({uniqueYears,
                         </span>
                     </div>
                     <div className='keyNumbersElementDiv'>
-                        <span>
+                        <span className='keyNumberTextSpan'>
                             Nombre d'hospitalisations entre {selectedYears[0]} et {selectedYears[1]}:
                         </span>
                         <span className='keyNumberSpan'>
                             {nbHospitalizedSelectedYears}
                         </span>
-                        <span>
+                        <span className='keyNumberTextSpan'>
                             Représente {
                                 ((nbHospitalizedSelectedYears/
                                 nbAccidentsSelectedYears)*100).toFixed(2)

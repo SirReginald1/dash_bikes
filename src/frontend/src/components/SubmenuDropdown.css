@@ -15,16 +15,18 @@
 }
 
 .sectionTitleDiv:hover{
-  background-color: rgba(220, 14, 14, 0.308);
+  background-color: rgba(75, 215, 245, 0.3);/*rgba(220, 14, 14, 0.308);*/
   cursor: pointer;
 }
 
 .sectionTitleSpan {
+  font-weight: bold;
   margin-top: 10px;
   color: var(--sidebarTitleColor);
   background-color: transparent;
   border: none;
   outline: none;
+  text-decoration: underline;
 }
 
 .sectionTitleSpan:focus {
@@ -34,6 +36,7 @@
 .pageSelectionBtn {
   margin-top: 10px !important;
   color: var(--sidebarButtonColor) !important;
+  text-transform: capitalize !important;
 }
 
 /*#####################*/

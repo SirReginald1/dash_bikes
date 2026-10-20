@@ -232,16 +232,18 @@ export default function MapRegionPage({uniqueYears,
     }, [idxFilterSet]);
     */
 
-    const layout = {
-        map: {
-            style: "dark",
-            center: {lon: 2.5, lat: 46.5},
-            zoom: 5.5
-        },
-        //width: 600,
-        //height: 400,
-        margin: {t: 0, b: 0, r:0, l:0}
-    }
+    const layout = useMemo(() => {
+        return({
+            map: {
+                style: theme.palette.mode === 'light' ? 'open-street-map' : 'dark',
+                center: {lon: 2.5, lat: 46.5},
+                zoom: 5.5
+            },
+            //width: 600,
+            //height: 400,
+            margin: {t: 0, b: 0, r:0, l:0}
+        })
+    }, [theme])
 
 
    // Initial render
@@ -273,7 +275,7 @@ export default function MapRegionPage({uniqueYears,
             traces,
             layout
         )
-    }, [traces/*, colorVarSelected*/])
+    }, [traces, theme/*, colorVarSelected*/])
     
     /**
      * Function that is passed to each selector element to set that map

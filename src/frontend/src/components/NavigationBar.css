@@ -51,11 +51,11 @@
 }
 
 #navbarFilterButton {
-  /*
+  
   color: var(--navbarBtnTextColor);
   border-color: var(--navbarBtnBoarderColor);
   background-color: var(--navbarBtnFillColor);
-  */
+  
   }
 
 .navbarMenuBtn > svg {

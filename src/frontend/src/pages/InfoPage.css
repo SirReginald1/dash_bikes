@@ -5,6 +5,19 @@
 }
 
 #mainContent {
-    justify-content: left;
+    /*justify-content: left;*/
+    justify-self: center;
     /*align-items: start;*/
+    border-radius: 30px;
+    overflow: hidden;
+    background-color: var(--blockHighlightcolor);
+    padding: 0% 2%;
+    padding-bottom: 0.83em;
+    width: 820px;
+    box-shadow: 10px 10px 5px rgba(0, 0, 0, 0.3);
+}
+
+#infoPageRootDiv {
+    width: 100%;
+    justify-content: center;
 }

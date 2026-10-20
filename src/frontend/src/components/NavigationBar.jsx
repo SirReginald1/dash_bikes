@@ -39,11 +39,11 @@ export default function Navbar({sideBarButtonAction,
   
   const FilterButton = styled(Button)(({ /*theme*/ }) => ({
     //color: theme.palette.getContrastText(filterOpenVar ? '/*purple[500]*/),
-    backgroundColor: filterOpenVar ? theme.customThemes.navbarFilterBtnColor/*'lightblue'*/ : 'none'/*purple[500]*/,
+    background: filterOpenVar ? theme.customThemes.navbarFilterBtnColor : 'none',
     '&:hover': {
-      backgroundColor: filterOpenVar ? theme.customThemes.navbarFilterBtnColor/*'lightblue'*/ : 'none'/*purple[700]*/,
+      background: filterOpenVar ? theme.customThemes.navbarFilterBtnColor : 'none',
     },
-    borderColor: theme.customThemes.navbarFilterBtnColor,
+    borderColor: 'rgba(44, 21, 110, 1)',
     color: filterOpenVar ? theme.customThemes.navbarFilterFilledBtnTextColor : theme.customThemes.navbarFilterBtnColor,
   }));
 
