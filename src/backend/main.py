@@ -74,7 +74,8 @@ app.mount(
 
 @app.get("/")
 async def serve_bikes_accident_dashboard():
-    return {"message": "This is the main website. Add /dash_bikes to url to get dashboard."}
+    return {"message": "This is the main website. Add /dash_bikes to url to get dashboard.",
+            "test": f"{THIS_FILE_PATH}"}
 
 # This is the path for this particular page in the dash_bikes sub app.
 # full_path:path and full_path: str catch any extras on the end of the url.
@@ -99,16 +100,15 @@ async def serve_dashboard_app():
 
 # Remember to 
 @bike_accident_dashboard.get("/data")
-def serve_dashboard_data():
+async def serve_dashboard_data():
     """Serves all data needed for the dashboard."""
-
     with open(SERVED_DATA_FILE_PATH, "r", encoding="utf-8") as data_file:
         data = json.load(data_file)
         data_file.close()
     return data
 
 @bike_accident_dashboard.get("/metadata")
-def serve_dashboard_metadata():
+async def serve_dashboard_metadata():
     """Serves the metadata containing all the data descriptions."""
 
     with open(SERVED_METADATA_FILE_PATH, "r", encoding="utf-8") as file:
@@ -117,7 +117,7 @@ def serve_dashboard_metadata():
     return metadata
 
 @bike_accident_dashboard.get("/reg_map")
-def serve_dashboard_metadata():
+async def serve_dashboard_metadata():
     """Serves the geojson map for regions."""
 
     with open(SERVED_REG_GEOJSON_FILE_PATH, "r", encoding="utf-8") as file:
@@ -126,7 +126,7 @@ def serve_dashboard_metadata():
     return mapdata
 
 @bike_accident_dashboard.get("/dep_map")
-def serve_dashboard_metadata():
+async def serve_dashboard_metadata():
     """Serves the geojson map for departements."""
 
     with open(SERVED_DEP_GEOJSON_FILE_PATH, "r", encoding="utf-8") as file:
@@ -144,6 +144,6 @@ if __name__ == "__main__":
     uvicorn.run(
         "main:app",
         host="0.0.0.0",
-        port=8000,
+        port=8001,
         #reload=True,  # Reload each time file is saved
     )

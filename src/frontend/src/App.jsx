@@ -21,6 +21,10 @@ function App() {
     sessionStorage.getItem("themeMode") ?? "dark"
   );
 
+  const APP_PORT = '8001'
+
+  const APP_ADDRESS = 'localhost'
+
   const [accidentData, setAccidentData] = useState();
 
   const [metadata, setMetadata] = useState();
@@ -122,14 +126,11 @@ function App() {
   }, [mainPage]);
 
   // Initial data fetching
+  //http://${APP_ADDRESS}:${APP_PORT}
   useEffect(() => {
-    //fetch("/dash_bikes/data").then(res => res.json()).then(setAppData)
-    //fetch("/dash_bikes/metadata").then(res => res.json()).then(setMetadata)
-    //fetch("/dash_bikes/reg_map").then(res => res.json()).then(setRegMapGeojson)
-    //fetch("/dash_bikes/dep_map").then(res => res.json()).then(setDepMapGeojson)
     Promise.all([
-      fetch("http://localhost:8000/dash_bikes/data").then(res => res.json()),//.then(setAccidentData)
-      fetch("http://localhost:8000/dash_bikes/metadata").then(res => res.json())
+      fetch(`/dash_bikes/data`).then(res => res.json()),//.then(setAccidentData)
+      fetch(`/dash_bikes/metadata`).then(res => res.json())
 
     ])
     .then(([accidentData, metadata]) => {
@@ -170,8 +171,8 @@ function App() {
     })
 
     Promise.all([
-      fetch("http://localhost:8000/dash_bikes/reg_map").then(res => res.json()),
-      fetch("http://localhost:8000/dash_bikes/dep_map").then(res => res.json())
+      fetch(`/dash_bikes/reg_map`).then(res => res.json()),
+      fetch(`/dash_bikes/dep_map`).then(res => res.json())
     ])
     .then((geojsonFetches
       //[regMap, depMap]
@@ -187,19 +188,6 @@ function App() {
           zoneComputedData.get(zoneKeys[i]).get(zone['properties']['code']).set("pop", Number(zone['properties']['pop']))
         }
       }
-      //setRegMapGeojson(regMap)
-      //setDepMapGeojson(depMap)
-      // Get population data from geojson
-      //for(let reg of regMap['features']){
-      //  //regPopDataMap.set(reg['properties']['code'], Number(reg['properties']['pop']))
-      //  zoneComputedData.get("reg").set(reg['properties']['code'], new Map())
-      //  zoneComputedData.get("reg").get(reg['properties']['code']).set("pop", Number(reg['properties']['pop']))
-      //}
-      //for(let dep of depMap['features']){
-      //  //depPopDataMap.set(dep['properties']['code'], Number(dep['properties']['pop']))
-      //  zoneComputedData.get("dep").set(dep['properties']['code'], new Map())
-      //  zoneComputedData.get("dep").get(dep['properties']['code']).set("pop", Number(dep['properties']['pop']))
-      //}
     })
     .catch(err => {
       console.log('Error while loading geojson data.')
@@ -208,11 +196,6 @@ function App() {
     .finally(() => {
       setLoadingGeojsonData(false)
     })
-    // Dev server address
-    //fetch("http://localhost:8000/dash_bikes/reg_map").then(res => res.json()).then(setRegMapGeojson)
-    //fetch("http://localhost:8000/dash_bikes/metadata").then(res => res.json()).then(setMetadata)
-    //fetch("http://localhost:8000/dash_bikes/dep_map").then(res => res.json()).then(setDepMapGeojson)
-    //console.log(accidentData.toString())
   }, [])
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
